@@ -7,6 +7,8 @@ public class Board3d {
 	private int[][][][] c;
 	private int maxScore;
 
+	private final int[] COLOR = { -1, 1 };
+
 	public Board3d(int size) {
 		nTicks = 0;
 		this.size = size;
@@ -83,9 +85,9 @@ public class Board3d {
 			m[x][y][z] = 0;
 			nTicks--;
 			int p = (color == -1) ? 0 : 1;
-			c[p][0][x][y]++;
-			c[p][1][x][z]++;
-			c[p][2][y][z]++;
+			c[p][0][x][y]--;
+			c[p][1][x][z]--;
+			c[p][2][y][z]--;
 		}
 	}
 
@@ -116,7 +118,7 @@ public class Board3d {
 				for (int i = 0; i < size; i++) {
 					for (int j = 0; j < size; j++) {
 						if (c[p][d][i][j] == size)
-							return p;
+							return COLOR[p];
 					}
 				}
 			}

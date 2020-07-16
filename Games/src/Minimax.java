@@ -6,7 +6,7 @@ public class Minimax {
 		Scanner scanner = new Scanner(System.in);
 		int size = 3;
 		int color = 1;
-		int depth = 3;
+		int depth = 2;
 		Move move = null;
 		Board board = new Board(size);
 		int maxScore = board.getMaxScore();
@@ -61,6 +61,8 @@ public class Minimax {
 			Move move = negamaxEval(board, depth - 1, -beta, -alpha, -color);
 			int score = -move.getScore();
 			moves[i].setScore(score);
+			if (best == null || score > best.getScore())
+				best = moves[i];
 			board.undoMove(moves[i]);
 			if (score > alpha) {
 				alpha = score;

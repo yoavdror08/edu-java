@@ -50,6 +50,8 @@ public class Minimax3d {
 			Move move = negamaxEval(board, depth - 1, -beta, -alpha, -color);
 			int score = -move.getScore();
 			moves[i].setScore(score);
+			if (best == null || score > best.getScore())
+				best = moves[i];			
 			board.undoMove(moves[i]);
 			if (score > alpha) {
 				alpha = score;
