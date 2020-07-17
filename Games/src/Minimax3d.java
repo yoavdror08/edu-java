@@ -16,9 +16,10 @@ public class Minimax3d {
 			board.print();
 			// System.out.println("current board score: " + board.score());
 			if (color == 1) {
-				int pos = scanner.nextInt();
-				int p = pos % 10 - 1;
-				move = new Move(new int[] { pos / 10 - 1, p / size, p % size });
+				String pos = scanner.next();
+				int plate = pos.charAt(0) - '1';
+				int s = pos.charAt(1) - 'a';
+				move = new Move(new int[] { plate, s / size, s % size });
 			} else {
 				move = negamaxEval(board, depth, -maxScore, +maxScore, color);
 				System.out.println("score: " + move.getScore());
@@ -35,12 +36,8 @@ public class Minimax3d {
 		scanner.close();
 	}
 
-	public static boolean terminal(Board3d board) {
-		return (board.isFull() || board.getWinner() != 0);
-	}
-
 	public static Move negamaxEval(Board3d board, int depth, int alpha, int beta, int color) {
-		if (terminal(board) || depth == 0)
+		if (board.isTerminal() || depth == 0)
 			return new Move(color * board.score());
 		Move[] moves = board.generateMoves();
 		board.orderMoves(moves, color);
@@ -51,7 +48,7 @@ public class Minimax3d {
 			int score = -move.getScore();
 			moves[i].setScore(score);
 			if (best == null || score > best.getScore())
-				best = moves[i];			
+				best = moves[i];
 			board.undoMove(moves[i]);
 			if (score > alpha) {
 				alpha = score;

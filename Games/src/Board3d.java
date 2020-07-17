@@ -2,10 +2,12 @@ import static java.lang.Math.*;
 
 public class Board3d {
 	private int size;
-	private int nTicks;
-	private int[][][] m;
-	private int[][][][] c;
-	private int maxScore;
+	private int nTicks; // tick counter
+	private int[][][] m; // 3D-matrix
+	private int[][][][] c; // orthogonal lines
+	private int[][] pd; // primary diagonals
+	private int[][][][] sd; // secondary diagonals
+	private int maxScore; // stands for infinity in board evaluations
 
 	private final int[] COLOR = { -1, 1 };
 
@@ -14,6 +16,8 @@ public class Board3d {
 		this.size = size;
 		m = new int[size][size][size];
 		c = new int[2][3][size][size];
+		sd = new int[2][3][size][2];
+		pd = new int[2][4];
 		maxScore = (int) pow(size, 2 * size);
 	}
 
@@ -23,6 +27,10 @@ public class Board3d {
 
 	public int getSize() {
 		return size;
+	}
+
+	public boolean isTerminal() {
+		return (isFull() || getWinner() != 0);
 	}
 
 	public void makeMove(Move move, int color) {
@@ -66,15 +74,47 @@ public class Board3d {
 		sortMoves(moves);
 	}
 
+	void updateLines(int p, int x, int y, int z, int inc) {
+		c[p][0][x][y] += inc;
+		c[p][1][x][z] += inc;
+		c[p][2][y][z] += inc;
+	}
+
+	void updateDiagonals(int p, int x, int y, int z, int inc) {
+		if (x == y)
+			sd[p][2][z][0] += inc;
+		if (x == size - 1 - y)
+			sd[p][2][z][1] += inc;
+		if (x == z)
+			sd[p][1][y][0] += inc;
+		if (x == size - 1 - z)
+			sd[p][1][y][1] += inc;
+		if (y == z)
+			sd[p][0][x][0] += inc;
+		if (y == size - 1 - z)
+			sd[p][0][x][1] += inc;
+		if (x == y && y == z)
+			pd[p][0] += inc;
+		if (x == size - 1 - y && y == z)
+			pd[p][1] += inc;
+		if (y == size - 1 - z && x == z)
+			pd[p][2] += inc;
+		if (z == size - 1 - x && x == y)
+			pd[p][3] += inc;
+	}
+
+	void updateCounters(int color, int x, int y, int z, int inc) {
+		int player = (color == -1) ? 0 : 1;
+		updateLines(player, x, y, z, inc);
+		updateDiagonals(player, x, y, z, inc);
+	}
+
 	public void set(int[] pos, int color) {
 		int x = pos[0], y = pos[1], z = pos[2];
 		if (color != 0 && m[x][y][z] == 0) {
 			m[x][y][z] = color;
 			nTicks++;
-			int p = (color == -1) ? 0 : 1;
-			c[p][0][x][y]++;
-			c[p][1][x][z]++;
-			c[p][2][y][z]++;
+			updateCounters(color, x, y, z, +1);
 		}
 	}
 
@@ -84,10 +124,7 @@ public class Board3d {
 		if (color != 0) {
 			m[x][y][z] = 0;
 			nTicks--;
-			int p = (color == -1) ? 0 : 1;
-			c[p][0][x][y]--;
-			c[p][1][x][z]--;
-			c[p][2][y][z]--;
+			updateCounters(color, x, y, z, -1);
 		}
 	}
 
@@ -97,13 +134,13 @@ public class Board3d {
 
 	public void print() {
 		char c;
-		char[] s = { 'o', '.', 'x' };
+		char[] DISPLAY = { '0', '.', 'X' };
 		for (int k = 0; k < size; k++) {
 			for (int i = 0; i < size; i++) {
 				System.out.print(" ".repeat(2 * i));
 				for (int j = 0; j < size; j++) {
-					c = s[m[k][i][j] + 1];
-					c = (c == '.') ? (char) ('1' + i * size + j) : c;
+					c = DISPLAY[m[k][i][j] + 1];
+					c = (c == '.') ? (char) ('a' + i * size + j) :  c;
 					System.out.print(c + "  ");
 				}
 				System.out.println();
@@ -122,6 +159,19 @@ public class Board3d {
 					}
 				}
 			}
+			for (int d = 0; d < 3; d++) {
+				for (int i = 0; i < size; i++) {
+					for (int j = 0; j < 2; j++) {
+						if (sd[p][d][i][j] == size)
+							return COLOR[p];
+					}
+				}
+			}
+			for (int k = 0; k < 4; k++) {
+				if (pd[p][k] == size)
+					return p;
+			}
+
 		}
 		return 0;
 	}
