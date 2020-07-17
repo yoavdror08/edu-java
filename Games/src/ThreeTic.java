@@ -5,9 +5,12 @@ import javax.swing.border.Border;
 
 import java.awt.event.*;
 
-public class ThreeTic extends JPanel implements ActionListener {
+public class ThreeTic extends JPanel implements ActionListener, ItemListener {
 	public static final int SIZE = 4;
-	public static final int DEPTH = 3;
+	public static int depth = 3;
+	
+	JComboBox depthCombo;
+
 	Board3d board = new Board3d(SIZE);
 	int color = 1;
 
@@ -70,15 +73,22 @@ public class ThreeTic extends JPanel implements ActionListener {
 	}
 
 	public ThreeTic() {
-		// now we just place the boards
-		setLayout(new GridLayout(SIZE, 1, 10, 10));
+		JPanel settingsPanel = new JPanel(new FlowLayout());
+		depthCombo = new JComboBox<Integer>(new Integer[] {1,2,3,4,5});
+		depthCombo.setSelectedItem(depth);
+		depthCombo.addItemListener(this);
+		settingsPanel.add(new JLabel("Level: "));
+		settingsPanel.add(depthCombo);
+		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		// now we just place the boards		
+		JPanel boardPanel = new JPanel(new GridLayout(SIZE, 1, 10, 10));
+		add(settingsPanel);
+		add(boardPanel);
 		for (int panel = 0; panel < PANELS; panel++) {
 			SingleBoard sb = new SingleBoard(panel, this);
 			boards[panel] = sb;
-			add(sb);
+			boardPanel.add(sb);
 		}
-		Move move = null;
-		int maxScore = board.getMaxScore();
 	}
 
 	// we can get and set knowing a panel number
@@ -101,7 +111,7 @@ public class ThreeTic extends JPanel implements ActionListener {
 		if (!checkGameOver()) {
 			currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
 			int maxScore = board.getMaxScore();
-			move = negamaxEval(board, DEPTH, -maxScore, +maxScore, -1);
+			move = negamaxEval(board, depth, -maxScore, +maxScore, -1);
 			System.out.println(move);
 			board.makeMove(move, -1);
 			int[] p = move.getPosition();
@@ -165,5 +175,15 @@ public class ThreeTic extends JPanel implements ActionListener {
 			}
 		}
 		return best;
+	}
+
+	@Override
+	public void itemStateChanged(ItemEvent e) {
+		// if the state combobox is changed 
+        if (e.getSource() == depthCombo) {   
+            depth = (Integer)depthCombo.getSelectedItem();
+            System.out.println("Depth is now " + depth);
+        } 
+		
 	}
 }
