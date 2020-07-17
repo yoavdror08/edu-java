@@ -6,7 +6,7 @@ import javax.swing.border.Border;
 import java.awt.event.*;
 
 public class ThreeTic extends JPanel implements ActionListener {
-	public static final int SIZE = 3;
+	public static final int SIZE = 4;
 	public static final int DEPTH = 3;
 	Board3d board = new Board3d(SIZE);
 	int color = 1;
@@ -64,13 +64,14 @@ public class ThreeTic extends JPanel implements ActionListener {
 
 		public void setValue(int row, int col, char val) {
 			items[row * COLS + col].setText(String.valueOf(val));
+			items[row * COLS + col].setEnabled(false);
 		}
 
 	}
 
 	public ThreeTic() {
 		// now we just place the boards
-		setLayout(new GridLayout(4, 1, 10, 10));
+		setLayout(new GridLayout(SIZE, 1, 10, 10));
 		for (int panel = 0; panel < PANELS; panel++) {
 			SingleBoard sb = new SingleBoard(panel, this);
 			boards[panel] = sb;
@@ -92,11 +93,7 @@ public class ThreeTic extends JPanel implements ActionListener {
 
 	public void actionPerformed(ActionEvent evt) {
 		BoardButton b = (BoardButton) evt.getSource();
-		// we could set this directly
-		// but we want to validate through setValue
-		// b.setText("X");
 		setValue(b.row, b.col, b.plane, currentPlayer);
-		b.setEnabled(false);
 		System.out.println(b);
 		Move move = new Move(new int[] { b.plane, b.row, b.col });
 		board.makeMove(move, 1);
@@ -105,9 +102,10 @@ public class ThreeTic extends JPanel implements ActionListener {
 			currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
 			int maxScore = board.getMaxScore();
 			move = negamaxEval(board, DEPTH, -maxScore, +maxScore, -1);
-			System.out.println("score: " + move.getScore());
+			System.out.println(move);
 			board.makeMove(move, -1);
 			int[] p = move.getPosition();
+			b.setEnabled(false);			
 			setValue(p[1], p[2], p[0], currentPlayer);
 			checkGameOver();
 			currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';

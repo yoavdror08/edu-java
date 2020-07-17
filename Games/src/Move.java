@@ -2,7 +2,7 @@
 public class Move {
 
 	private int[] position;
-	
+
 	public int[] getPosition() {
 		return position;
 	}
@@ -35,5 +35,14 @@ public class Move {
 
 	public int getPosAt(int i) {
 		return position[i];
+	}
+
+	public String toString() {
+		String s = "(" + position[0];
+		for (int i = 1; i < position.length; i++) {
+			s += "," + i;
+		}
+		s += "), score=" + score;
+		return s;
 	}
 }
