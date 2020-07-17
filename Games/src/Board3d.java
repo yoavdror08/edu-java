@@ -140,7 +140,7 @@ public class Board3d {
 				System.out.print(" ".repeat(2 * i));
 				for (int j = 0; j < size; j++) {
 					c = DISPLAY[m[k][i][j] + 1];
-					c = (c == '.') ? (char) ('a' + i * size + j) :  c;
+					c = (c == '.') ? (char) ('a' + i * size + j) : c;
 					System.out.print(c + "  ");
 				}
 				System.out.println();
@@ -171,7 +171,6 @@ public class Board3d {
 				if (pd[p][k] == size)
 					return p;
 			}
-
 		}
 		return 0;
 	}
@@ -184,16 +183,30 @@ public class Board3d {
 		int tsize = (int) pow(size, 3);
 		int s = 0;
 		for (int p = 0; p < 2; p++) {
+			int sign = (p == 0) ? -1 : 1;
 			for (int d = 0; d < 3; d++) {
 				for (int i = 0; i < size; i++) {
 					for (int j = 0; j < size; j++) {
 						if (c[1 - p][d][i][j] == 0) {
-							int sign = (p == 0) ? -1 : 1;
 							s += sign * pow(tsize, c[p][d][i][j] - 1);
 						}
 					}
 				}
 			}
+			for (int d = 0; d < 3; d++) {
+				for (int i = 0; i < size; i++) {
+					for (int j = 0; j < 2; j++) {
+						if (sd[1-p][d][i][j] == 0)
+							s += sign * pow(tsize, sd[p][d][i][j] - 1);
+					}
+				}
+			}
+			for (int k = 0; k < 4; k++) {
+				if (pd[1-p][k] == 0)
+					s += sign * pow(tsize, pd[p][k] - 1);
+
+			}
+			
 		}
 		return s;
 	}

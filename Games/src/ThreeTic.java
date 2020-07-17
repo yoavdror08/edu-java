@@ -6,7 +6,7 @@ import javax.swing.border.Border;
 import java.awt.event.*;
 
 public class ThreeTic extends JPanel implements ActionListener {
-	public static final int SIZE = 4;
+	public static final int SIZE = 3;
 	public static final int DEPTH = 3;
 	Board3d board = new Board3d(SIZE);
 	int color = 1;
@@ -97,20 +97,20 @@ public class ThreeTic extends JPanel implements ActionListener {
 		// b.setText("X");
 		setValue(b.row, b.col, b.plane, currentPlayer);
 		b.setEnabled(false);
-		currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
 		System.out.println(b);
 		Move move = new Move(new int[] { b.plane, b.row, b.col });
 		board.makeMove(move, 1);
 
 		if (!checkGameOver()) {
+			currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
 			int maxScore = board.getMaxScore();
 			move = negamaxEval(board, DEPTH, -maxScore, +maxScore, -1);
 			System.out.println("score: " + move.getScore());
 			board.makeMove(move, -1);
 			int[] p = move.getPosition();
 			setValue(p[1], p[2], p[0], currentPlayer);
-			currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
 			checkGameOver();
+			currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
 		}
 
 	}
