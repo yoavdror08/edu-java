@@ -6,18 +6,20 @@ import javax.swing.border.Border;
 import java.awt.event.*;
 
 public class ThreeTic extends JPanel implements ActionListener, ItemListener {
-	public static final int SIZE = 4;
-	public static int depth = 3;
-	
+
+	static JFrame frm;
+	static ThreeTic threeTic = null;
+
 	JComboBox depthCombo;
-
-	Board3d board = new Board3d(SIZE);
-	int color = 1;
-
-	public static final int PANELS = SIZE;
-
-	private SingleBoard[] boards = new SingleBoard[PANELS];
+	JComboBox sizeCombo;
+	private SingleBoard[] boards;
 	private char currentPlayer = 'X';
+
+	public static int size = 4;
+	public static int depth = 3;
+
+	Board3d board;
+	int color = 1;
 
 	// want to store some extra data in our button
 	// so we can access it later
@@ -38,57 +40,32 @@ public class ThreeTic extends JPanel implements ActionListener, ItemListener {
 
 	// A panel for rows and cols
 	class SingleBoard extends JPanel {
-		public static final int ROWS = SIZE;
-		public static final int COLS = SIZE;
-
-		// I hate 2d arrays
-		private BoardButton[] items = new BoardButton[ROWS * COLS];
+		private BoardButton[] items;
 
 		public SingleBoard(int plane, ActionListener listener) {
-			setLayout(new GridLayout(ROWS, COLS));
-			for (int row = 0; row < ROWS; row++) {
-				for (int col = 0; col < COLS; col++) {
+			items = new BoardButton[size * size];
+			setLayout(new GridLayout(size, size));
+			for (int row = 0; row < size; row++) {
+				for (int col = 0; col < size; col++) {
 					BoardButton b = new BoardButton(row, col, plane);
 					b.addActionListener(listener);
 					b.setFocusPainted(false);
 					add(b);
-					items[row * COLS + col] = b;
+					items[row * size + col] = b;
 				}
 			}
 		}
 
-		// at this level, allow a button value to be changed
-		// given a row and col
-		// see, you never need 2d arrays
 		public char getValue(int row, int col) {
-			String s = items[row * COLS + col].getText();
+			String s = items[row * size + col].getText();
 			return (s == null || s.length() == 0) ? ' ' : s.charAt(0);
 		}
 
 		public void setValue(int row, int col, char val) {
-			items[row * COLS + col].setText(String.valueOf(val));
-			items[row * COLS + col].setEnabled(false);
+			items[row * size + col].setText(String.valueOf(val));
+			items[row * size + col].setEnabled(false);
 		}
 
-	}
-
-	public ThreeTic() {
-		JPanel settingsPanel = new JPanel(new FlowLayout());
-		depthCombo = new JComboBox<Integer>(new Integer[] {1,2,3,4});
-		depthCombo.setSelectedItem(depth);
-		depthCombo.addItemListener(this);
-		settingsPanel.add(new JLabel("Level: "));
-		settingsPanel.add(depthCombo);
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		// now we just place the boards		
-		JPanel boardPanel = new JPanel(new GridLayout(SIZE, 1, 10, 10));
-		add(settingsPanel);
-		add(boardPanel);
-		for (int panel = 0; panel < PANELS; panel++) {
-			SingleBoard sb = new SingleBoard(panel, this);
-			boards[panel] = sb;
-			boardPanel.add(sb);
-		}
 	}
 
 	// we can get and set knowing a panel number
@@ -133,8 +110,31 @@ public class ThreeTic extends JPanel implements ActionListener, ItemListener {
 		return false;
 	}
 
-	static JFrame frm;
-	static ThreeTic threeTic = null;
+	public ThreeTic() {
+		board = new Board3d(size);
+		JPanel settingsPanel = new JPanel(new FlowLayout());
+		sizeCombo = new JComboBox<Integer>(new Integer[] { 3, 4, 5, 6 });
+		sizeCombo.setSelectedItem(size);
+		sizeCombo.addItemListener(this);
+		settingsPanel.add(new JLabel("Size: "));
+		settingsPanel.add(sizeCombo);
+		depthCombo = new JComboBox<Integer>(new Integer[] { 1, 2, 3, 4 });
+		depthCombo.setSelectedItem(depth);
+		depthCombo.addItemListener(this);
+		settingsPanel.add(new JLabel("Level: "));
+		settingsPanel.add(depthCombo);
+		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		// now we just place the boards
+		JPanel boardPanel = new JPanel(new GridLayout(size, 1, 10, 10));
+		add(settingsPanel);
+		add(boardPanel);
+		boards = new SingleBoard[size];
+		for (int panel = 0; panel < size; panel++) {
+			SingleBoard sb = new SingleBoard(panel, this);
+			boards[panel] = sb;
+			boardPanel.add(sb);
+		}
+	}
 
 	public static void restart() {
 		if (threeTic != null)
@@ -178,11 +178,15 @@ public class ThreeTic extends JPanel implements ActionListener, ItemListener {
 
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		// if the state combobox is changed 
-        if (e.getSource() == depthCombo) {   
-            depth = (Integer)depthCombo.getSelectedItem();
-            System.out.println("Depth is now " + depth);
-        } 
-		
+		// if the state combobox is changed
+		if (e.getSource() == depthCombo) {
+			depth = (Integer) depthCombo.getSelectedItem();
+			System.out.println("Depth is now " + depth);
+		}
+		if (e.getSource() == sizeCombo) {
+			size = (Integer) sizeCombo.getSelectedItem();
+			restart();
+		}
+
 	}
 }
