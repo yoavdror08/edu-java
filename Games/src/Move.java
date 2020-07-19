@@ -40,7 +40,7 @@ public class Move {
 	public String toString() {
 		String s = "(" + position[0];
 		for (int i = 1; i < position.length; i++) {
-			s += "," + i;
+			s += "," + position[i];
 		}
 		s += "), score=" + score;
 		return s;

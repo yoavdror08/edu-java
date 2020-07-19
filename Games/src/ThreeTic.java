@@ -6,7 +6,7 @@ import javax.swing.border.Border;
 import java.awt.event.*;
 
 public class ThreeTic extends JPanel implements ActionListener, ItemListener {
-	public static final int SIZE = 4;
+	public static final int SIZE = 3;
 	public static int depth = 3;
 	
 	JComboBox depthCombo;
@@ -74,7 +74,7 @@ public class ThreeTic extends JPanel implements ActionListener, ItemListener {
 
 	public ThreeTic() {
 		JPanel settingsPanel = new JPanel(new FlowLayout());
-		depthCombo = new JComboBox<Integer>(new Integer[] {1,2,3,4,5});
+		depthCombo = new JComboBox<Integer>(new Integer[] {1,2,3,4});
 		depthCombo.setSelectedItem(depth);
 		depthCombo.addItemListener(this);
 		settingsPanel.add(new JLabel("Level: "));
@@ -115,7 +115,6 @@ public class ThreeTic extends JPanel implements ActionListener, ItemListener {
 			System.out.println(move);
 			board.makeMove(move, -1);
 			int[] p = move.getPosition();
-			b.setEnabled(false);			
 			setValue(p[1], p[2], p[0], currentPlayer);
 			checkGameOver();
 			currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';

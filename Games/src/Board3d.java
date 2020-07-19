@@ -18,7 +18,7 @@ public class Board3d {
 		c = new int[2][3][size][size];
 		sd = new int[2][3][size][2];
 		pd = new int[2][4];
-		maxScore = (int) pow(size, 2 * size);
+		maxScore = (int) pow(size, 3 * size);
 	}
 
 	public int getMaxScore() {
@@ -68,7 +68,7 @@ public class Board3d {
 
 		for (int i = 0; i < moves.length; i++) {
 			makeMove(moves[i], color);
-			moves[i].setScore(score());
+			moves[i].setScore(color * score());
 			undoMove(moves[i]);
 		}
 		sortMoves(moves);
@@ -176,8 +176,8 @@ public class Board3d {
 	}
 
 	/*
-	 * sum of: tsize^(x-1) for each x-in-a-line without opponent. (with sign +1 or
-	 * -1) for relevant player
+	 * sum of: tsize^(x-1) for each line without opponent. (with sign +1 or -1) for
+	 * relevant player
 	 */
 	public int score() {
 		int tsize = (int) pow(size, 3);
@@ -196,17 +196,17 @@ public class Board3d {
 			for (int d = 0; d < 3; d++) {
 				for (int i = 0; i < size; i++) {
 					for (int j = 0; j < 2; j++) {
-						if (sd[1-p][d][i][j] == 0)
+						if (sd[1 - p][d][i][j] == 0)
 							s += sign * pow(tsize, sd[p][d][i][j] - 1);
 					}
 				}
 			}
 			for (int k = 0; k < 4; k++) {
-				if (pd[1-p][k] == 0)
+				if (pd[1 - p][k] == 0)
 					s += sign * pow(tsize, pd[p][k] - 1);
 
 			}
-			
+
 		}
 		return s;
 	}
