@@ -180,16 +180,20 @@ public class Board3d {
 	 * relevant player
 	 */
 	public int score() {
-		int tsize = (int) pow(size, 3);
+		int size3 = (int) pow(size, 3);
 		int s = 0;
+		
+		//This factor prefers quick wins and slow loses.
+		//And it prefers quick blocking even if you lose anyway eventually. 
+		double t = (double) nTicks / (nTicks + 1);
+		
 		for (int p = 0; p < 2; p++) {
 			int sign = (p == 0) ? -1 : 1;
 			for (int d = 0; d < 3; d++) {
 				for (int i = 0; i < size; i++) {
 					for (int j = 0; j < size; j++) {
-						if (c[1 - p][d][i][j] == 0) {
-							s += sign * pow(tsize, c[p][d][i][j] - 1);
-						}
+						if (c[1 - p][d][i][j] == 0)
+							s += sign * pow(size3, c[p][d][i][j] - t);
 					}
 				}
 			}
@@ -197,16 +201,14 @@ public class Board3d {
 				for (int i = 0; i < size; i++) {
 					for (int j = 0; j < 2; j++) {
 						if (sd[1 - p][d][i][j] == 0)
-							s += sign * pow(tsize, sd[p][d][i][j] - 1);
+							s += sign * pow(size3, sd[p][d][i][j] - t);
 					}
 				}
 			}
 			for (int k = 0; k < 4; k++) {
 				if (pd[1 - p][k] == 0)
-					s += sign * pow(tsize, pd[p][k] - 1);
-
+					s += sign * pow(size3, pd[p][k] - t);
 			}
-
 		}
 		return s;
 	}

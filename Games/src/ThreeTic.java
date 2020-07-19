@@ -6,7 +6,7 @@ import javax.swing.border.Border;
 import java.awt.event.*;
 
 public class ThreeTic extends JPanel implements ActionListener, ItemListener {
-	public static final int SIZE = 3;
+	public static final int SIZE = 4;
 	public static int depth = 3;
 	
 	JComboBox depthCombo;
