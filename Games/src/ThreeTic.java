@@ -100,9 +100,9 @@ public class ThreeTic extends JPanel implements ActionListener, ItemListener {
 	}
 
 	public boolean checkGameOver() {
-		int winner = board.getWinner();
-		if (winner != 0 || board.isFull()) {
-			String msg = "The winner is " + currentPlayer + "!";
+		boolean draw = board.isFull();
+		if (board.getWinner() != 0 || draw) {
+			String msg = draw ? "It's a draw!" : "The winner is " + currentPlayer + "!";
 			JOptionPane.showMessageDialog(this, msg, "Game Over", JOptionPane.INFORMATION_MESSAGE);
 			restart();
 			return true;

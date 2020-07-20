@@ -79,15 +79,16 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 	public void setValue(int srow, int scol, int row, int col, char val) {
 		boards[srow][scol].setValue(row, col, val);
 		if (val == 'O')
-			if (board.sTicks[srow][scol] < size * size)
-				for (int i = 0; i < size; i++)
-					for (int j = 0; j < size; j++)
-						for (int h = 0; h < size; h++)
-							for (int k = 0; k < size; k++) {
-								boolean enableBoard = (i == row && j == col);
-								BoardButton b = boards[i][j].items[h * size + k];
-								b.setEnabled(enableBoard && b.getText().length() != 1);
-							}
+			for (int i = 0; i < size; i++)
+				for (int j = 0; j < size; j++)
+					for (int h = 0; h < size; h++)
+						for (int k = 0; k < size; k++) {
+							BoardButton b = boards[i][j].items[h * size + k];
+							boolean over = (board.sTicks[i][j] == size * size || board.sw[i][j] != 0);
+							boolean directed = (i == row && j == col);
+							boolean ticked = getValue(i, j, h, k) != ' ';
+							b.setEnabled((!over && directed || over && !directed) && !ticked);
+						}
 	}
 
 	Move searchMove(BoardUltimate board, int depth) {
@@ -118,9 +119,9 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 	}
 
 	public boolean checkGameOver() {
-		int winner = board.getWinner();
-		if (winner != 0 || board.isFull()) {
-			String msg = "The winner is " + currentPlayer + "!";
+		boolean draw = board.isFull();
+		if (board.getWinner() != 0 || draw) {
+			String msg = draw ? "It's a draw!" : "The winner is " + currentPlayer + "!";
 			JOptionPane.showMessageDialog(this, msg, "Game Over", JOptionPane.INFORMATION_MESSAGE);
 			restart();
 			return true;
@@ -145,6 +146,7 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		// now we just place the boards
 		JPanel boardPanel = new JPanel(new GridLayout(size, size, 10, 10));
+		boardPanel.setBackground(Color.ORANGE);
 		add(settingsPanel);
 		add(boardPanel);
 		boards = new SingleBoard[size][size];

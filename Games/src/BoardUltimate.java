@@ -10,9 +10,10 @@ public class BoardUltimate {
 	private int[][] pd; // primary diagonals
 	private int[][][][][] sc; // secondary orthogonal lines
 	private int[][][][] sd; // secondary diagonals
-	
+	int[][] sw; // secondary winner -1/0/+1
+
 	private Move lastMove;
-	
+
 	private int maxScore; // stands for infinity in board evaluations
 
 	private final int[] COLOR = { -1, 1 };
@@ -20,13 +21,14 @@ public class BoardUltimate {
 	public BoardUltimate(int size) {
 		nTicks = 0;
 		this.size = size;
-		sTicks = new int[size][size]; 
+		sTicks = new int[size][size];
 		pm = new int[size][size];
 		pc = new int[2][size][size];
 		pd = new int[2][2];
 		sm = new int[size][size][size][size];
 		sc = new int[2][size][size][size][size];
 		sd = new int[2][size][size][2];
+		sw = new int[size][size];
 	}
 
 	public int getMaxScore() {
@@ -82,19 +84,40 @@ public class BoardUltimate {
 		sortMoves(moves);
 	}
 
+	// returns true if winner
+	boolean updateCounters(int x, int y, int[][] c, int[] d, int inc) {
+		c[x][y] += inc;
+		int id = (x == y) ? 0 : 1;
+		if (x == y || x == size - 1 - y)
+			d[id] += inc;
+
+		if (c[x][y] == size || d[id] == size)
+			return true;
+		return false;
+	}
+
 	void updateCounters(int color, int x, int y, int z, int w, int inc) {
 		int p = (color == -1) ? 0 : 1;
-		int before = sc[p][x][y][z][w];
-		if (before == size || before + inc == size)
+
+		boolean winner = updateCounters(z, w, sc[p][x][y], sd[p][x][y], inc);
+		if (sw[x][y] != 0 || winner) {
 			pc[p][x][y] += inc;
-		sc[p][x][y][z][w] += inc;
-		if (x == y || x == size - 1 - y) {
-			int d = (x == y) ? 0 : 1;
-			before = sd[p][x][y][d];
-			if (before == size || before + inc == size)
+			sw[x][y] = (winner) ? color : 0;
+
+			if (x == y || x == size - 1 - y) {
+				int d = (x == y) ? 0 : 1;
 				pd[p][d] += inc;
-			sd[p][x][y][d] += inc;
+			}
 		}
+	}
+
+	public int get(int x, int y, int z, int w) {
+		return sm[x][y][z][w];
+	}
+
+	public int get(int[] pos) {
+		int x = pos[0], y = pos[1], z = pos[2], w = pos[3];
+		return sm[x][y][z][w];
 	}
 
 	public void set(int[] pos, int color) {
@@ -141,20 +164,24 @@ public class BoardUltimate {
 		}
 	}
 
+	// -1/0/+1/2, 2 means draw
 	public int getWinner() {
+		boolean draw = true;
 		for (int p = 0; p < 2; p++) {
 			for (int i = 0; i < size; i++) {
 				for (int j = 0; j < size; j++) {
+					draw = draw && pc[p][i][j] > 0;
 					if (pc[p][i][j] == size)
 						return COLOR[p];
 				}
 			}
 			for (int i = 0; i < 2; i++) {
+				draw = draw && pd[p][i] > 0;
 				if (pd[p][i] == size)
 					return COLOR[p];
 			}
 		}
-		return 0;
+		return draw ? 2 : 0;
 	}
 
 	/*
