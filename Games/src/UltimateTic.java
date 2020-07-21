@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.List;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -7,11 +8,17 @@ import java.awt.event.*;
 
 public class UltimateTic extends JPanel implements ActionListener, ItemListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	// machine, still on, human, draw
+	private final static Color[] TICK_COLOR = { Color.YELLOW, Color.GRAY, Color.GREEN, Color.DARK_GRAY };
 	static JFrame frm;
 	static UltimateTic threeTic = null;
 
-	JComboBox depthCombo;
-	JComboBox sizeCombo;
+	JComboBox<Integer> depthCombo;
+	JComboBox<Integer> sizeCombo;
 	private SingleBoard[][] boards;
 	private char currentPlayer = 'X';
 
@@ -25,6 +32,10 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 	// want to store some extra data in our button
 	// so we can access it later
 	class BoardButton extends JButton {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		public int row, col, srow, scol;
 
 		public BoardButton(int srow, int scol, int row, int col) {
@@ -42,6 +53,10 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 
 	// A panel for rows and cols
 	class SingleBoard extends JPanel {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		private BoardButton[] items;
 
 		public SingleBoard(int srow, int scol, ActionListener listener) {
@@ -78,35 +93,40 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 
 	public void setValue(int srow, int scol, int row, int col, char val) {
 		boards[srow][scol].setValue(row, col, val);
-		if (val == 'O')
-			for (int i = 0; i < size; i++)
-				for (int j = 0; j < size; j++)
-					for (int h = 0; h < size; h++)
-						for (int k = 0; k < size; k++) {
-							BoardButton b = boards[i][j].items[h * size + k];
-							boolean over = (board.sTicks[i][j] == size * size || board.sw[i][j] != 0);
-							boolean directed = (i == row && j == col);
+		boolean destOver = board.pm[row][col] != 0;
+		for (int i = 0; i < size; i++)
+			for (int j = 0; j < size; j++)
+				for (int h = 0; h < size; h++)
+					for (int k = 0; k < size; k++) {
+						BoardButton b = boards[i][j].items[h * size + k];
+						if (board.pm[i][j] != 0)
+							b.setBackground(TICK_COLOR[board.pm[i][j] + 1]);
+						if (val == 'O') {
+							boolean over = (board.sTicks[i][j] == size * size || board.pm[i][j] != 0);
+							boolean destiny = (i == row && j == col);
+							boolean enableBoard = !over && (destiny || destOver && !destiny);
 							boolean ticked = getValue(i, j, h, k) != ' ';
-							b.setEnabled((!over && directed || over && !directed) && !ticked);
+							b.setEnabled(enableBoard && !ticked);
 						}
+					}
 	}
 
 	Move searchMove(BoardUltimate board, int depth) {
-		Move[] moves = board.generateMoves();
-		int i = rand.nextInt(moves.length);
-		return moves[i];
+		List<Move> moves = board.generateMoves();
+		int i = rand.nextInt(moves.size());
+		return moves.get(i);
 	}
 
 	public void actionPerformed(ActionEvent evt) {
 		BoardButton b = (BoardButton) evt.getSource();
-		setValue(b.srow, b.scol, b.row, b.col, currentPlayer);
 		System.out.println(b);
 		Move move = new Move(new int[] { b.srow, b.scol, b.row, b.col });
 		board.makeMove(move, 1);
+		setValue(b.srow, b.scol, b.row, b.col, currentPlayer);
 
 		if (!checkGameOver()) {
 			currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
-			int maxScore = board.getMaxScore();
+			// int maxScore = board.getMaxScore();
 			move = searchMove(board, depth);
 			System.out.println(move);
 			board.makeMove(move, -1);
@@ -119,9 +139,9 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 	}
 
 	public boolean checkGameOver() {
-		boolean draw = board.isFull();
-		if (board.getWinner() != 0 || draw) {
-			String msg = draw ? "It's a draw!" : "The winner is " + currentPlayer + "!";
+		int status = board.getWinner();
+		if (status != 0) {
+			String msg = (status == 2) ? "It's a draw!" : "The winner is " + currentPlayer + "!";
 			JOptionPane.showMessageDialog(this, msg, "Game Over", JOptionPane.INFORMATION_MESSAGE);
 			restart();
 			return true;
@@ -180,20 +200,22 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 	public static Move negamaxEval(BoardUltimate board, int depth, int alpha, int beta, int color) {
 		if (board.isTerminal() || depth == 0)
 			return new Move(color * board.score());
-		Move[] moves = board.generateMoves();
-		board.orderMoves(moves, color);
+		List<Move> moves = board.generateMoves();
+		// board.orderMoves(moves, color);
 		Move best = null;
-		for (int i = 0; i < moves.length && alpha < beta; i++) {
-			board.makeMove(moves[i], color);
-			Move move = negamaxEval(board, depth - 1, -beta, -alpha, -color);
-			int score = -move.getScore();
-			moves[i].setScore(score);
+		for (Move move : moves) {
+			if (alpha < beta)
+				break;
+			board.makeMove(move, color);
+			Move tmove = negamaxEval(board, depth - 1, -beta, -alpha, -color);
+			int score = -tmove.getScore();
+			move.setScore(score);
 			if (best == null || score > best.getScore())
-				best = moves[i];
-			board.undoMove(moves[i]);
+				best = move;
+			board.undoMove(move);
 			if (score > alpha) {
 				alpha = score;
-				best = moves[i];
+				best = move;
 			}
 		}
 		return best;

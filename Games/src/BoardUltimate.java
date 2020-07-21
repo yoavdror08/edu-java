@@ -1,16 +1,17 @@
 import static java.lang.Math.*;
 
+import java.util.*;
+
 public class BoardUltimate {
 	private int size;
 	int nTicks; // tick counter
 	int sTicks[][]; // secondary tick counter
-	private int[][] pm; // primary matrix
-	private int[][][][] sm; // secondary matrix
+	int[][] pm; // primary matrix
 	private int[][][] pc; // primary orthogonal lines
 	private int[][] pd; // primary diagonals
+	private int[][][][] sm; // secondary matrix
 	private int[][][][][] sc; // secondary orthogonal lines
 	private int[][][][] sd; // secondary diagonals
-	int[][] sw; // secondary winner -1/0/+1
 
 	private Move lastMove;
 
@@ -19,16 +20,15 @@ public class BoardUltimate {
 	private final int[] COLOR = { -1, 1 };
 
 	public BoardUltimate(int size) {
-		nTicks = 0;
 		this.size = size;
+		nTicks = 0;
 		sTicks = new int[size][size];
 		pm = new int[size][size];
-		pc = new int[2][size][size];
+		pc = new int[2][2][size];
 		pd = new int[2][2];
 		sm = new int[size][size][size][size];
-		sc = new int[2][size][size][size][size];
+		sc = new int[2][size][size][2][size];
 		sd = new int[2][size][size][2];
-		sw = new int[size][size];
 	}
 
 	public int getMaxScore() {
@@ -52,62 +52,51 @@ public class BoardUltimate {
 		clear(move.getPosition());
 	}
 
-	public Move[] generateMoves() {
-		int n = 0;
-		int prow = lastMove.getPosAt(2);
-		int pcol = lastMove.getPosAt(3);
-		Move[] moves = new Move[size * size - sTicks[prow][pcol]];
+	void genInnerMoves(int prow, int pcol, List<Move> moves) {
 		for (int j = 0; j < size; j++)
 			for (int k = 0; k < size; k++)
 				if (sm[prow][pcol][j][k] == 0)
-					moves[n++] = new Move(new int[] { prow, pcol, j, k });
+					moves.add(new Move(new int[] { prow, pcol, j, k }));
+	}
+
+	public List<Move> generateMoves() {
+		int prow = lastMove.getPosAt(2);
+		int pcol = lastMove.getPosAt(3);
+		List<Move> moves = new ArrayList<Move>();
+		if (pm[prow][pcol] == 0)
+			genInnerMoves(prow, pcol, moves);
+		else
+			for (int i = 0; i < size; i++)
+				for (int j = 0; j < size; j++)
+					if (!(i == prow && j == pcol))
+						genInnerMoves(i, j, moves);
 		return moves;
-	}
-
-	public void sortMoves(Move[] moves) {
-		for (int i = 0; i < moves.length; i++) {
-			for (int j = i + 1; j < moves.length; j++) {
-				if (moves[i].getScore() < moves[j].getScore()) {
-					Move t = moves[i];
-					moves[i] = moves[j];
-					moves[j] = t;
-				}
-			}
-		}
-	}
-
-	public void orderMoves(Move[] moves, int color) {
-		for (int i = 0; i < moves.length; i++) {
-			makeMove(moves[i], color);
-			undoMove(moves[i]);
-		}
-		sortMoves(moves);
 	}
 
 	// returns true if winner
 	boolean updateCounters(int x, int y, int[][] c, int[] d, int inc) {
-		c[x][y] += inc;
-		int id = (x == y) ? 0 : 1;
+		c[0][x] += inc;
+		c[1][y] += inc;
+		int iDiag = (x == y) ? 0 : 1;
 		if (x == y || x == size - 1 - y)
-			d[id] += inc;
+			d[iDiag] += inc;
 
-		if (c[x][y] == size || d[id] == size)
-			return true;
-		return false;
+		return (c[0][x] == size || c[1][y] == size || d[iDiag] == size);
 	}
 
 	void updateCounters(int color, int x, int y, int z, int w, int inc) {
 		int p = (color == -1) ? 0 : 1;
 
-		boolean winner = updateCounters(z, w, sc[p][x][y], sd[p][x][y], inc);
-		if (sw[x][y] != 0 || winner) {
-			pc[p][x][y] += inc;
-			sw[x][y] = (winner) ? color : 0;
-
+		boolean wasWin = getWinner(sc[p][x][y], sd[p][x][y]) == 1;
+		boolean nowWin = updateCounters(z, w, sc[p][x][y], sd[p][x][y], inc);
+		if (wasWin != nowWin) {
+			pc[p][0][x] += inc;
+			pc[p][1][y] += inc;
 			if (x == y || x == size - 1 - y) {
 				int d = (x == y) ? 0 : 1;
 				pd[p][d] += inc;
 			}
+			pm[x][y] = nowWin ? color : 0;
 		}
 	}
 
@@ -142,7 +131,7 @@ public class BoardUltimate {
 	}
 
 	public boolean isFull() {
-		return (nTicks == pow(size, 4));
+		return nTicks == size * size;
 	}
 
 	public void print() {
@@ -164,28 +153,43 @@ public class BoardUltimate {
 		}
 	}
 
-	// -1/0/+1/2, 2 means draw
+	// -1/0/1/2, 2 means draw
 	public int getWinner() {
-		boolean draw = true;
+		int w, s = 0;
 		for (int p = 0; p < 2; p++) {
-			for (int i = 0; i < size; i++) {
-				for (int j = 0; j < size; j++) {
-					draw = draw && pc[p][i][j] > 0;
-					if (pc[p][i][j] == size)
-						return COLOR[p];
-				}
-			}
-			for (int i = 0; i < 2; i++) {
-				draw = draw && pd[p][i] > 0;
-				if (pd[p][i] == size)
-					return COLOR[p];
-			}
+			w = getWinner(pc[p], pd[p]);
+			if (w == 1)
+				return COLOR[p];
+			s += w;
 		}
-		return draw ? 2 : 0;
+		return s;
 	}
 
-	/*
-	 * sum of: tsize^(x-1) for each line without opponent. (with sign +1 or -1) for
+	/*-
+	 * return: 0/1/2
+	 * 
+	 * 0 = not a winner and some counter is zero, 
+	 * 1 = winner, 
+	 * 2 = all non-zero
+	 */
+	public int getWinner(int[][] c, int[] d) {
+		boolean noZero = true;
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < size; j++) {
+				noZero = noZero && c[i][j] > 0;
+				if (c[i][j] == size)
+					return 1;
+			}
+			noZero = noZero && d[i] > 0;
+			if (d[i] == size)
+				return 1;			
+		}
+		return noZero ? 2 : 0;
+	}
+
+	/*-
+	 * sum of: tsize^(x-1) for each line without opponent. 
+	 * (with sign +1 or -1) for
 	 * relevant player
 	 */
 	public int score() {
