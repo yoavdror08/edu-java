@@ -32,8 +32,8 @@ public class MCTS implements Algorithm {
 	}
 
 	public Node search(Board board) {
-		Node<MCData> leaf;
-		Node<MCData> current = board.getCurrentNode();
+		Node leaf;
+		Node current = board.getCurrentNode();
 		timer = System.currentTimeMillis();
 		while (resources_left()) {
 			leaf = traverse(board, current); // select + expand
@@ -43,33 +43,33 @@ public class MCTS implements Algorithm {
 		return bestChild(current);
 	}
 
-	Node<MCData> traverse(Board board, Node<MCData> node) {
+	Node traverse(Board board, Node node) {
 		while (fullyExpanded(node)) {
 			node = bestUCT(node);
-			board.makeMove(node, node.getValue().getPlayer());
+			board.makeMove(node, node.getMcData().getPlayer());
 		}
 
-		Node<MCData> unvisited = pickUnivisted(node.getChildren());
+		Node unvisited = pickUnivisted(node.getChildren());
 		// in case no children are present / node is terminal
 		return (unvisited != null) ? unvisited : node;
 	}
 
 	// Are all children visited?
-	boolean fullyExpanded(Node<MCData> node) {
-		for (Node<MCData> child : node.getChildren()) {
-			if (child.getValue().getNumRollouts() == 0)
+	boolean fullyExpanded(Node node) {
+		for (Node child : node.getChildren()) {
+			if (child.getMcData().getNumRollouts() == 0)
 				return false;
 		}
 		return true;
 	}
 
-	Node<MCData> bestUCT(Node<MCData> node) {
-		Node<MCData> selected = null;
+	Node bestUCT(Node node) {
+		Node selected = null;
 		double bestValue = Double.MIN_VALUE;
-		for (Node<MCData> c : node.getChildren()) {
-			double totValue = c.getValue().getNumWins();
-			int nVisits = c.getValue().getNumRollouts();
-			int parentVisits = node.getValue().getNumRollouts();
+		for (Node c : node.getChildren()) {
+			double totValue = c.getMcData().getNumWins();
+			int nVisits = c.getMcData().getNumRollouts();
+			int parentVisits = node.getMcData().getNumRollouts();
 			double uctValue = totValue / (nVisits + EPSILON)
 					+ Math.sqrt(Math.log(parentVisits + 1) / (nVisits + EPSILON)) + rand.nextDouble() * EPSILON;
 			// small random number to break ties randomly in unexpanded nodes
@@ -88,18 +88,18 @@ public class MCTS implements Algorithm {
 	}
 
 	// function for the result of the simulation
-	int rollout(Board board, Node<MCData> node) {
+	int rollout(Board board, Node node) {
 		while (nonTerminal(board)) {
 			node = rolloutPolicy(board, node);
-			board.makeMove(node, node.getValue().getPlayer());
+			board.makeMove(node, node.getMcData().getPlayer());
 		}
 		return board.getWinner();
 	}
 
 	// function for randomly selecting a child node
-	Node rolloutPolicy(Board board, Node<MCData> node) {
+	Node rolloutPolicy(Board board, Node node) {
 		if (node.getChildren() == null)
-			board.generateMoves(node.getValue().getPlayer());
+			board.generateMoves(node.getMcData().getPlayer());
 
 		Node[] children = node.getChildren();
 		int i = rand.nextInt(children.length);
@@ -109,17 +109,17 @@ public class MCTS implements Algorithm {
 	/*
 	 * back-propagate without updating the board
 	 */
-	void backpropagateToRoot(Board board, Node<MCData> node, int result) {
+	void backpropagateToRoot(Board board, Node node, int result) {
 		if (node.getParent() == null)
 			return;
-		node.getValue().update(result);
+		node.getMcData().update(result);
 		backpropagateToRoot(board, node.getParent(), result);
 	}
 
-	void backpropagate(Board board, Node<MCData> node, int result) {
+	void backpropagate(Board board, Node node, int result) {
 		if (node.getParent() == board.getCurrentNode())
 			backpropagateToRoot(board, node, result);
-		node.getValue().update(result);
+		node.getMcData().update(result);
 		board.undoMove(node);
 		backpropagate(board, node.getParent(), result);
 	}
@@ -130,8 +130,8 @@ public class MCTS implements Algorithm {
 	Node bestChild(Node node) {
 		int max = -1;
 		Node best = null;
-		for (Node<MCData> child : node.getChildren()) {
-			int nRollouts = child.getValue().getNumRollouts();
+		for (Node child : node.getChildren()) {
+			int nRollouts = child.getMcData().getNumRollouts();
 			if (nRollouts > max) {
 				max = nRollouts;
 				best = child;
@@ -140,9 +140,9 @@ public class MCTS implements Algorithm {
 		return best;
 	}
 
-	Node<MCData> pickUnivisted(Node[] nodes) {
-		for (Node<MCData> node : nodes) {
-			if (node.getValue().getNumRollouts() == 0)
+	Node pickUnivisted(Node[] nodes) {
+		for (Node node : nodes) {
+			if (node.getMcData().getNumRollouts() == 0)
 				return node;
 		}
 		return null;

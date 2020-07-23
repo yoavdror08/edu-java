@@ -8,12 +8,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-public class BoardUltimate<T> implements Board<T>, Serializable {
+public class BoardUltimate implements Board, Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	private int size;
 	int nTicks; // tick counter
 	int sTicks[][]; // secondary tick counter
@@ -24,9 +24,9 @@ public class BoardUltimate<T> implements Board<T>, Serializable {
 	private int[][][][][] sc; // secondary orthogonal lines
 	private int[][][][] sd; // secondary diagonals
 
-	private Node<T> currentNode;
+	private Node currentNode;
 
-	public Node<T> getCurrentNode() {
+	public Node getCurrentNode() {
 		return currentNode;
 	}
 
@@ -60,8 +60,8 @@ public class BoardUltimate<T> implements Board<T>, Serializable {
 		} catch (ClassNotFoundException e) {
 			return null;
 		}
-	}	
-	
+	}
+
 	public int getMaxScore() {
 		return maxScore;
 	}
@@ -74,13 +74,13 @@ public class BoardUltimate<T> implements Board<T>, Serializable {
 		return (isFull() || getWinner() != 0);
 	}
 
-	public void makeMove(Node<T> node, int color) {
+	public void makeMove(Node node, int color) {
 		set(node.getMove(), color);
 		currentNode = node;
 	}
-	
-	public Node<T> createNode(int[] move, int color) {
-		Node<T> node = new Node<T>(currentNode, move);		
+
+	public Node createNode(int[] move, int color) {
+		Node node = new Node(currentNode, move, color);
 		return node;
 	}
 
@@ -89,18 +89,18 @@ public class BoardUltimate<T> implements Board<T>, Serializable {
 		currentNode = node.getParent();
 	}
 
-	private void genInnerMoves(int color, int prow, int pcol, List<Node<T>> moves) {
+	private void genInnerMoves(int color, int prow, int pcol, List<Node> moves) {
 		for (int j = 0; j < size; j++)
 			for (int k = 0; k < size; k++)
 				if (sm[prow][pcol][j][k] == 0)
-					moves.add(new Node<T>(currentNode, new int[] { prow, pcol, j, k }));
+					moves.add(new Node(currentNode, new int[] { prow, pcol, j, k }, color));
 	}
 
 	public void generateMoves(int color) {
 		int[] pos = currentNode.getMove();
 		int prow = pos[2];
 		int pcol = pos[3];
-		List<Node<T>> moves = new ArrayList<Node<T>>();
+		List<Node> moves = new ArrayList<Node>();
 		if (pm[prow][pcol] == 0)
 			genInnerMoves(color, prow, pcol, moves);
 		else
@@ -108,7 +108,7 @@ public class BoardUltimate<T> implements Board<T>, Serializable {
 				for (int j = 0; j < size; j++)
 					if (!(i == prow && j == pcol))
 						genInnerMoves(color, i, j, moves);
-		Node[] children = (Node[])moves.toArray();
+		Node[] children = (Node[]) moves.toArray(new Node[moves.size()]);
 		currentNode.setChildren(children);
 	}
 
@@ -116,11 +116,11 @@ public class BoardUltimate<T> implements Board<T>, Serializable {
 	boolean updateCounters(int x, int y, int[][] c, int[] d, int inc) {
 		c[0][x] += inc;
 		c[1][y] += inc;
-		int iDiag = (x == y) ? 0 : 1;
-		if (x == y || x == size - 1 - y)
-			d[iDiag] += inc;
-
-		return (c[0][x] == size || c[1][y] == size || d[iDiag] == size);
+		if (x == y)
+			d[0] += inc;
+		if (x == size - 1 - y)
+			d[1] += inc;
+		return max(c[0][x], c[1][y]) == size || max(d[0], d[1]) == size;
 	}
 
 	void updateCounters(int color, int x, int y, int z, int w, int inc) {

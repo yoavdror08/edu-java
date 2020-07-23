@@ -1,41 +1,48 @@
 
-public class Node<T> {
-	private T value;
-	private Node<T> parent;
-	private Node<T>[] children;
+public class Node {
 	private int[] move;
+	private MCData mcData;
+	private NMData nmData;
+	
+	private Node parent;
+	private Node[] children;
 
-	public Node(Node<T> parent, int[] move) {
-		this(parent, null, move);
+	public Node(Node parent, int[] move, int player) {
+		this.move = move;
+		this.mcData = new MCData(player);
+		this.parent = parent;
 	}
 
-	public Node(Node<T> parent, T value, int[] move) {
-		this.move = move;
-		this.value = value;
-		this.parent = parent;
+	public NMData getNmData() {
+		return nmData;
+	}
+
+	public MCData getMcData() {
+		return mcData;
 	}
 
 	public int[] getMove() {
 		return move;
 	}
 
-	public T getValue() {
-		return value;
-	}
-
-	public Node<T>[] getChildren() {
+	public Node[] getChildren() {
 		return children;
 	}
 
-	public void setChildren(Node<T>[] nodes) {
+	public void setChildren(Node[] nodes) {
 		this.children = nodes;
 	}
 
-	public Node<T> getParent() {
+	public Node getParent() {
 		return parent;
 	}
 
 	public String toString() {
-		return value.toString();
+		String s = "(" + move[0];
+		for (int i = 1; i < move.length; i++) {
+			s += "," + move[i];
+		}
+		s += "), " + mcData.toString();
+		return s;
 	}
 }

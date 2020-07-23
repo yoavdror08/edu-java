@@ -92,13 +92,11 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 	}
 
 	/*
-	 * @TODO: replace the loops:
-	 * call board.generateMoves()
-	 * and then for each move enable the relevant button.
-	 * This way no need for "uboard".
+	 * @TODO: replace the loops: call board.generateMoves() and then for each move
+	 * enable the relevant button. This way no need for "uboard".
 	 */
 	public void setValue(int srow, int scol, int row, int col, char val) {
-		BoardUltimate uboard = (BoardUltimate)board;
+		BoardUltimate uboard = (BoardUltimate) board;
 		boards[srow][scol].setValue(row, col, val);
 		boolean destOver = uboard.pm[row][col] != 0;
 		for (int i = 0; i < size; i++)
@@ -135,7 +133,7 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 		BoardButton b = (BoardButton) evt.getSource();
 		System.out.println(b);
 		int[] pos = new int[] { b.srow, b.scol, b.row, b.col };
-		Node node = board.createNode(pos, 1);		
+		Node node = board.createNode(pos, 1);
 		board.makeMove(node, 1);
 		setValue(b.srow, b.scol, b.row, b.col, currentPlayer);
 
@@ -166,7 +164,7 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 
 	public UltimateTic() {
 		rand = new Random();
-		board = new BoardUltimate<MCData>(size);
+		board = new BoardUltimate(size);
 		algorithm = new MCTS();
 		JPanel settingsPanel = new JPanel(new FlowLayout());
 		sizeCombo = new JComboBox<Integer>(new Integer[] { 3, 4, 5, 6 });
@@ -213,21 +211,23 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 		restart();
 	}
 
-	public static Node<Move> negamaxEval(BoardUltimate board, int depth, int alpha, int beta, int color) {
-		if (board.isTerminal() || depth == 0)
-			return new Node<Move>(null, new Move(color * board.score()), null);
+	public static Node negamaxEval(BoardUltimate board, int depth, int alpha, int beta, int color) {
+		if (board.isTerminal() || depth == 0) {
+			Node node = new Node(board.getCurrentNode(), null, color);
+			node.getNmData().setScore(color * board.score());
+		}
 		board.generateMoves(color);
 		Node[] moves = board.getCurrentNode().getChildren();
 		// board.orderMoves(moves, color);
-		Node<Move> best = null;
-		for (Node<Move> move : moves) {
+		Node best = null;
+		for (Node move : moves) {
 			if (alpha < beta)
 				break;
 			board.makeMove(move, color);
-			Node<Move> tmove = negamaxEval(board, depth - 1, -beta, -alpha, -color);
-			int score = -tmove.getValue().getScore();
-			move.getValue().setScore(score);
-			if (best == null || score > best.getValue().getScore())
+			Node tmove = negamaxEval(board, depth - 1, -beta, -alpha, -color);
+			int score = -tmove.getNmData().getScore();
+			move.getNmData().setScore(score);
+			if (best == null || score > best.getNmData().getScore())
 				best = move;
 			board.undoMove(move);
 			if (score > alpha) {
