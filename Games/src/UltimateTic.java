@@ -25,15 +25,15 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 	public static int size = 3;
 	public static int depth = 3;
 
-	BoardUltimate board;
+	Board board;
+	MCTS algorithm;
+
 	int color = 1;
 	Random rand;
 
-	// want to store some extra data in our button
-	// so we can access it later
 	class BoardButton extends JButton {
 		/**
-		 * 
+		 * want to store some extra data in our button so we can access it later
 		 */
 		private static final long serialVersionUID = 1L;
 		public int row, col, srow, scol;
@@ -91,18 +91,25 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 		return boards[srow][scol].getValue(row, col);
 	}
 
+	/*
+	 * @TODO: replace the loops:
+	 * call board.generateMoves()
+	 * and then for each move enable the relevant button.
+	 * This way no need for "uboard".
+	 */
 	public void setValue(int srow, int scol, int row, int col, char val) {
+		BoardUltimate uboard = (BoardUltimate)board;
 		boards[srow][scol].setValue(row, col, val);
-		boolean destOver = board.pm[row][col] != 0;
+		boolean destOver = uboard.pm[row][col] != 0;
 		for (int i = 0; i < size; i++)
 			for (int j = 0; j < size; j++)
 				for (int h = 0; h < size; h++)
 					for (int k = 0; k < size; k++) {
 						BoardButton b = boards[i][j].items[h * size + k];
-						if (board.pm[i][j] != 0)
-							b.setBackground(TICK_COLOR[board.pm[i][j] + 1]);
+						if (uboard.pm[i][j] != 0)
+							b.setBackground(TICK_COLOR[uboard.pm[i][j] + 1]);
 						if (val == 'O') {
-							boolean over = (board.sTicks[i][j] == size * size || board.pm[i][j] != 0);
+							boolean over = (uboard.sTicks[i][j] == size * size || uboard.pm[i][j] != 0);
 							boolean destiny = (i == row && j == col);
 							boolean enableBoard = !over && (destiny || destOver && !destiny);
 							boolean ticked = getValue(i, j, h, k) != ' ';
@@ -111,26 +118,34 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 					}
 	}
 
-	Move searchMove(BoardUltimate board, int depth) {
-		List<Move> moves = board.generateMoves();
-		int i = rand.nextInt(moves.size());
-		return moves.get(i);
+	Node randomMove(Board board) {
+		board.generateMoves(-1);
+		Node[] children = board.getCurrentNode().getChildren();
+		int i = rand.nextInt(children.length);
+		return children[i];
+	}
+
+	Node searchMove() {
+
+		// Move move = algorithm.monte_carlo_tree_search(board);
+		return randomMove(board);
 	}
 
 	public void actionPerformed(ActionEvent evt) {
 		BoardButton b = (BoardButton) evt.getSource();
 		System.out.println(b);
-		Move move = new Move(new int[] { b.srow, b.scol, b.row, b.col });
-		board.makeMove(move, 1);
+		int[] pos = new int[] { b.srow, b.scol, b.row, b.col };
+		Node node = board.createNode(pos, 1);		
+		board.makeMove(node, 1);
 		setValue(b.srow, b.scol, b.row, b.col, currentPlayer);
 
 		if (!checkGameOver()) {
 			currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
 			// int maxScore = board.getMaxScore();
-			move = searchMove(board, depth);
-			System.out.println(move);
-			board.makeMove(move, -1);
-			int[] p = move.getPosition();
+			node = searchMove();
+			System.out.println(node);
+			board.makeMove(node, -1);
+			int[] p = node.getMove();
 			setValue(p[0], p[1], p[2], p[3], currentPlayer);
 			checkGameOver();
 			currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
@@ -151,7 +166,8 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 
 	public UltimateTic() {
 		rand = new Random();
-		board = new BoardUltimate(size);
+		board = new BoardUltimate<MCData>(size);
+		algorithm = new MCTS();
 		JPanel settingsPanel = new JPanel(new FlowLayout());
 		sizeCombo = new JComboBox<Integer>(new Integer[] { 3, 4, 5, 6 });
 		sizeCombo.setSelectedItem(size);
@@ -197,20 +213,21 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 		restart();
 	}
 
-	public static Move negamaxEval(BoardUltimate board, int depth, int alpha, int beta, int color) {
+	public static Node<Move> negamaxEval(BoardUltimate board, int depth, int alpha, int beta, int color) {
 		if (board.isTerminal() || depth == 0)
-			return new Move(color * board.score());
-		List<Move> moves = board.generateMoves();
+			return new Node<Move>(null, new Move(color * board.score()), null);
+		board.generateMoves(color);
+		Node[] moves = board.getCurrentNode().getChildren();
 		// board.orderMoves(moves, color);
-		Move best = null;
-		for (Move move : moves) {
+		Node<Move> best = null;
+		for (Node<Move> move : moves) {
 			if (alpha < beta)
 				break;
 			board.makeMove(move, color);
-			Move tmove = negamaxEval(board, depth - 1, -beta, -alpha, -color);
-			int score = -tmove.getScore();
-			move.setScore(score);
-			if (best == null || score > best.getScore())
+			Node<Move> tmove = negamaxEval(board, depth - 1, -beta, -alpha, -color);
+			int score = -tmove.getValue().getScore();
+			move.getValue().setScore(score);
+			if (best == null || score > best.getValue().getScore())
 				best = move;
 			board.undoMove(move);
 			if (score > alpha) {

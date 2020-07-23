@@ -8,7 +8,7 @@ public class Minimax {
 		int color = 1;
 		int depth = 2;
 		Move move = null;
-		Board board = new Board(size);
+		TicBoard board = new TicBoard(size);
 		int maxScore = board.getMaxScore();
 		while (board.getWinner() == 0 && !board.isFull()) {
 			board.print();
@@ -46,11 +46,11 @@ public class Minimax {
 	 * constitutes alpha-beta pruning if (alpha >= beta) return alpha; } return
 	 * alpha; }
 	 */
-	public static boolean terminal(Board board) {
+	public static boolean terminal(TicBoard board) {
 		return (board.isFull() || board.getWinner() != 0);
 	}
 
-	public static Move negamaxEval(Board board, int depth, int alpha, int beta, int color) {
+	public static Move negamaxEval(TicBoard board, int depth, int alpha, int beta, int color) {
 		if (terminal(board) || depth == 0)
 			return new Move(color * board.score());
 		Move[] moves = board.generateMoves();

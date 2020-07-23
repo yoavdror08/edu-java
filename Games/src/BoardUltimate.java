@@ -1,8 +1,19 @@
 import static java.lang.Math.*;
-
 import java.util.*;
 
-public class BoardUltimate {
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
+public class BoardUltimate<T> implements Board<T>, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private int size;
 	int nTicks; // tick counter
 	int sTicks[][]; // secondary tick counter
@@ -13,7 +24,11 @@ public class BoardUltimate {
 	private int[][][][][] sc; // secondary orthogonal lines
 	private int[][][][] sd; // secondary diagonals
 
-	private Move lastMove;
+	private Node<T> currentNode;
+
+	public Node<T> getCurrentNode() {
+		return currentNode;
+	}
 
 	private int maxScore; // stands for infinity in board evaluations
 
@@ -31,6 +46,22 @@ public class BoardUltimate {
 		sd = new int[2][size][size][2];
 	}
 
+	public Board deepClone() {
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ObjectOutputStream oos = new ObjectOutputStream(baos);
+			oos.writeObject(this);
+
+			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+			ObjectInputStream ois = new ObjectInputStream(bais);
+			return (Board) ois.readObject();
+		} catch (IOException e) {
+			return null;
+		} catch (ClassNotFoundException e) {
+			return null;
+		}
+	}	
+	
 	public int getMaxScore() {
 		return maxScore;
 	}
@@ -43,34 +74,42 @@ public class BoardUltimate {
 		return (isFull() || getWinner() != 0);
 	}
 
-	public void makeMove(Move move, int color) {
-		set(move.getPosition(), color);
-		lastMove = move;
+	public void makeMove(Node<T> node, int color) {
+		set(node.getMove(), color);
+		currentNode = node;
+	}
+	
+	public Node<T> createNode(int[] move, int color) {
+		Node<T> node = new Node<T>(currentNode, move);		
+		return node;
 	}
 
-	public void undoMove(Move move) {
-		clear(move.getPosition());
+	public void undoMove(Node node) {
+		clear(node.getMove());
+		currentNode = node.getParent();
 	}
 
-	void genInnerMoves(int prow, int pcol, List<Move> moves) {
+	private void genInnerMoves(int color, int prow, int pcol, List<Node<T>> moves) {
 		for (int j = 0; j < size; j++)
 			for (int k = 0; k < size; k++)
 				if (sm[prow][pcol][j][k] == 0)
-					moves.add(new Move(new int[] { prow, pcol, j, k }));
+					moves.add(new Node<T>(currentNode, new int[] { prow, pcol, j, k }));
 	}
 
-	public List<Move> generateMoves() {
-		int prow = lastMove.getPosAt(2);
-		int pcol = lastMove.getPosAt(3);
-		List<Move> moves = new ArrayList<Move>();
+	public void generateMoves(int color) {
+		int[] pos = currentNode.getMove();
+		int prow = pos[2];
+		int pcol = pos[3];
+		List<Node<T>> moves = new ArrayList<Node<T>>();
 		if (pm[prow][pcol] == 0)
-			genInnerMoves(prow, pcol, moves);
+			genInnerMoves(color, prow, pcol, moves);
 		else
 			for (int i = 0; i < size; i++)
 				for (int j = 0; j < size; j++)
 					if (!(i == prow && j == pcol))
-						genInnerMoves(i, j, moves);
-		return moves;
+						genInnerMoves(color, i, j, moves);
+		Node[] children = (Node[])moves.toArray();
+		currentNode.setChildren(children);
 	}
 
 	// returns true if winner
@@ -182,7 +221,7 @@ public class BoardUltimate {
 			}
 			noZero = noZero && d[i] > 0;
 			if (d[i] == size)
-				return 1;			
+				return 1;
 		}
 		return noZero ? 2 : 0;
 	}
