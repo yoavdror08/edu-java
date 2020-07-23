@@ -32,8 +32,8 @@ public class MCTS implements Algorithm {
 	}
 
 	public Node search(Board board) {
-		Node leaf;
-		Node current = board.getCurrentNode();
+		Node<MCData> leaf;
+		Node<MCData> current = board.getCurrentNode();
 		timer = System.currentTimeMillis();
 		while (resources_left()) {
 			leaf = traverse(board, current); // select + expand
@@ -43,10 +43,10 @@ public class MCTS implements Algorithm {
 		return bestChild(current);
 	}
 
-	Node traverse(Board board, Node node) {
+	Node traverse(Board board, Node<MCData> node) {
 		while (fullyExpanded(node)) {
 			node = bestUCT(node);
-			board.makeMove(node, node.getMcData().getPlayer());
+			board.makeMove(node, node.getData().getPlayer());
 		}
 
 		Node unvisited = pickUnivisted(node.getChildren());
@@ -55,21 +55,21 @@ public class MCTS implements Algorithm {
 	}
 
 	// Are all children visited?
-	boolean fullyExpanded(Node node) {
-		for (Node child : node.getChildren()) {
-			if (child.getMcData().getNumRollouts() == 0)
+	boolean fullyExpanded(Node<MCData> node) {
+		for (Node<MCData> child : node.getChildren()) {
+			if (child.getData().getNumRollouts() == 0)
 				return false;
 		}
 		return true;
 	}
 
-	Node bestUCT(Node node) {
-		Node selected = null;
+	Node bestUCT(Node<MCData> node) {
+		Node<MCData> selected = null;
 		double bestValue = Double.MIN_VALUE;
-		for (Node c : node.getChildren()) {
-			double totValue = c.getMcData().getNumWins();
-			int nVisits = c.getMcData().getNumRollouts();
-			int parentVisits = node.getMcData().getNumRollouts();
+		for (Node<MCData> c : node.getChildren()) {
+			double totValue = c.getData().getNumWins();
+			int nVisits = c.getData().getNumRollouts();
+			int parentVisits = node.getData().getNumRollouts();
 			double uctValue = totValue / (nVisits + EPSILON)
 					+ Math.sqrt(Math.log(parentVisits + 1) / (nVisits + EPSILON)) + rand.nextDouble() * EPSILON;
 			// small random number to break ties randomly in unexpanded nodes
@@ -88,18 +88,18 @@ public class MCTS implements Algorithm {
 	}
 
 	// function for the result of the simulation
-	int rollout(Board board, Node node) {
+	int rollout(Board board, Node<MCData> node) {
 		while (nonTerminal(board)) {
 			node = rolloutPolicy(board, node);
-			board.makeMove(node, node.getMcData().getPlayer());
+			board.makeMove(node, node.getData().getPlayer());
 		}
 		return board.getWinner();
 	}
 
 	// function for randomly selecting a child node
-	Node rolloutPolicy(Board board, Node node) {
+	Node rolloutPolicy(Board board, Node<MCData> node) {
 		if (node.getChildren() == null)
-			board.generateMoves(node.getMcData().getPlayer());
+			board.generateMoves(node.getData().getPlayer());
 
 		Node[] children = node.getChildren();
 		int i = rand.nextInt(children.length);
@@ -109,17 +109,17 @@ public class MCTS implements Algorithm {
 	/*
 	 * back-propagate without updating the board
 	 */
-	void backpropagateToRoot(Board board, Node node, int result) {
+	void backpropagateToRoot(Board board, Node<MCData> node, int result) {
 		if (node.getParent() == null)
 			return;
-		node.getMcData().update(result);
+		node.getData().update(result);
 		backpropagateToRoot(board, node.getParent(), result);
 	}
 
-	void backpropagate(Board board, Node node, int result) {
+	void backpropagate(Board board, Node<MCData> node, int result) {
 		if (node.getParent() == board.getCurrentNode())
 			backpropagateToRoot(board, node, result);
-		node.getMcData().update(result);
+		node.getData().update(result);
 		board.undoMove(node);
 		backpropagate(board, node.getParent(), result);
 	}
@@ -130,8 +130,8 @@ public class MCTS implements Algorithm {
 	Node bestChild(Node node) {
 		int max = -1;
 		Node best = null;
-		for (Node child : node.getChildren()) {
-			int nRollouts = child.getMcData().getNumRollouts();
+		for (Node<MCData> child : node.getChildren()) {
+			int nRollouts = child.getData().getNumRollouts();
 			if (nRollouts > max) {
 				max = nRollouts;
 				best = child;
@@ -141,8 +141,8 @@ public class MCTS implements Algorithm {
 	}
 
 	Node pickUnivisted(Node[] nodes) {
-		for (Node node : nodes) {
-			if (node.getMcData().getNumRollouts() == 0)
+		for (Node<MCData> node : nodes) {
+			if (node.getData().getNumRollouts() == 0)
 				return node;
 		}
 		return null;

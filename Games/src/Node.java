@@ -1,24 +1,23 @@
 
-public class Node {
+public class Node<T> {
 	private int[] move;
-	private MCData mcData;
-	private NMData nmData;
-	
+	private T data;
+
 	private Node parent;
 	private Node[] children;
 
 	public Node(Node parent, int[] move, int player) {
+		this.data = null;
 		this.move = move;
-		this.mcData = new MCData(player);
 		this.parent = parent;
 	}
 
-	public NMData getNmData() {
-		return nmData;
+	public T getData() {
+		return data;
 	}
 
-	public MCData getMcData() {
-		return mcData;
+	public void setData(T data) {
+		this.data = data;
 	}
 
 	public int[] getMove() {
@@ -42,7 +41,7 @@ public class Node {
 		for (int i = 1; i < move.length; i++) {
 			s += "," + move[i];
 		}
-		s += "), " + mcData.toString();
+		s += "), data=" + data;
 		return s;
 	}
 }

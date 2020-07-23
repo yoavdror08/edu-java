@@ -106,7 +106,7 @@ public class BoardUltimate implements Board, Serializable {
 		else
 			for (int i = 0; i < size; i++)
 				for (int j = 0; j < size; j++)
-					if (!(i == prow && j == pcol))
+					if (pm[i][j] == 0)
 						genInnerMoves(color, i, j, moves);
 		Node[] children = (Node[]) moves.toArray(new Node[moves.size()]);
 		currentNode.setChildren(children);
@@ -123,6 +123,35 @@ public class BoardUltimate implements Board, Serializable {
 		return max(c[0][x], c[1][y]) == size || max(d[0], d[1]) == size;
 	}
 
+	boolean isSecondaryDraw(int x, int y) {
+		return getWinner(sc[0][x][y], sd[0][x][y]) == 2 && getWinner(sc[1][x][y], sd[1][x][y]) == 2;
+	}
+
+	public boolean isDraw() {
+		for (int p = -1; p <= 1; p += 2) {
+			boolean openDiag1 = false;
+			boolean openDiag2 = false;
+			for (int i = 0; i < size; i++) {
+				boolean openRow = false;
+				boolean openCol = false;
+				for (int j = 0; j < size; j++) {
+					openRow = openRow || (pm[i][j] == 0);
+					openCol = openCol || (pm[j][i] == 0);
+				}
+				if (openRow || openCol)
+					return false;
+				openDiag1 = openDiag1 || (pm[i][i] == 0);
+				openDiag2 = openDiag1 || (pm[i][size - 1 - i] == 0);
+			}
+			if (openDiag1 || openDiag2)
+				return false;
+		}
+		return true;
+	}
+
+	/*
+	 * inc = -1/+1 to state if this is doMove or undoMove (clear tick-box)
+	 */
 	void updateCounters(int color, int x, int y, int z, int w, int inc) {
 		int p = (color == -1) ? 0 : 1;
 
@@ -131,12 +160,14 @@ public class BoardUltimate implements Board, Serializable {
 		if (wasWin != nowWin) {
 			pc[p][0][x] += inc;
 			pc[p][1][y] += inc;
-			if (x == y || x == size - 1 - y) {
-				int d = (x == y) ? 0 : 1;
-				pd[p][d] += inc;
-			}
+			if (x == y)
+				pd[p][0] += inc;
+			if (x == size - 1 - y)
+				pd[p][1] += inc;
 			pm[x][y] = nowWin ? color : 0;
 		}
+		if (isSecondaryDraw(x, y))
+			pm[x][y] = 2;
 	}
 
 	public int get(int x, int y, int z, int w) {
@@ -201,7 +232,9 @@ public class BoardUltimate implements Board, Serializable {
 				return COLOR[p];
 			s += w;
 		}
-		return s;
+		if (s == 4 || isDraw())
+			return 2;
+		return 0;
 	}
 
 	/*-

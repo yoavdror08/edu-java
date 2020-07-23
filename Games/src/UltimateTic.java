@@ -131,11 +131,11 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 
 	public void actionPerformed(ActionEvent evt) {
 		BoardButton b = (BoardButton) evt.getSource();
-		System.out.println(b);
 		int[] pos = new int[] { b.srow, b.scol, b.row, b.col };
 		Node node = board.createNode(pos, 1);
 		board.makeMove(node, 1);
 		setValue(b.srow, b.scol, b.row, b.col, currentPlayer);
+		System.out.println(b);
 
 		if (!checkGameOver()) {
 			currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
@@ -211,23 +211,23 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 		restart();
 	}
 
-	public static Node negamaxEval(BoardUltimate board, int depth, int alpha, int beta, int color) {
+	public static Node<NMData> negamaxEval(BoardUltimate board, int depth, int alpha, int beta, int color) {
 		if (board.isTerminal() || depth == 0) {
-			Node node = new Node(board.getCurrentNode(), null, color);
-			node.getNmData().setScore(color * board.score());
+			Node<NMData> node = new Node<NMData>(board.getCurrentNode(), null, color);
+			node.getData().setScore(color * board.score());
 		}
 		board.generateMoves(color);
-		Node[] moves = board.getCurrentNode().getChildren();
+		Node<NMData>[] moves = board.getCurrentNode().getChildren();
 		// board.orderMoves(moves, color);
-		Node best = null;
-		for (Node move : moves) {
+		Node<NMData> best = null;
+		for (Node<NMData> move : moves) {
 			if (alpha < beta)
 				break;
 			board.makeMove(move, color);
-			Node tmove = negamaxEval(board, depth - 1, -beta, -alpha, -color);
-			int score = -tmove.getNmData().getScore();
-			move.getNmData().setScore(score);
-			if (best == null || score > best.getNmData().getScore())
+			Node<NMData> tmove = negamaxEval(board, depth - 1, -beta, -alpha, -color);
+			int score = -tmove.getData().getScore();
+			move.getData().setScore(score);
+			if (best == null || score > best.getData().getScore())
 				best = move;
 			board.undoMove(move);
 			if (score > alpha) {
