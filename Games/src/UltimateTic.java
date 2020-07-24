@@ -174,6 +174,7 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 		settingsPanel.add(sizeCombo);
 		depthCombo = new JComboBox<Integer>(new Integer[] { 1, 2, 3, 4 });
 		depthCombo.setSelectedItem(depth);
+		depthCombo.setEnabled(false);
 		depthCombo.addItemListener(this);
 		settingsPanel.add(new JLabel("Level: "));
 		settingsPanel.add(depthCombo);

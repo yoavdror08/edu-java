@@ -39,8 +39,8 @@ public class BoardUltimate implements Board, Serializable {
 		nTicks = 0;
 		sTicks = new int[size][size];
 		pm = new int[size][size];
-		pc = new int[2][2][size];
-		pd = new int[2][2];
+		pc = new int[3][2][size]; // 3 = player 1, 2, draw
+		pd = new int[3][2]; // 3 = player 1, 2, draw
 		sm = new int[size][size][size][size];
 		sc = new int[2][size][size][2][size];
 		sd = new int[2][size][size][2];
@@ -128,22 +128,19 @@ public class BoardUltimate implements Board, Serializable {
 	}
 
 	public boolean isDraw() {
-		for (int p = -1; p <= 1; p += 2) {
-			boolean openDiag1 = false;
-			boolean openDiag2 = false;
-			for (int i = 0; i < size; i++) {
-				boolean openRow = false;
-				boolean openCol = false;
-				for (int j = 0; j < size; j++) {
-					openRow = openRow || (pm[i][j] == 0);
-					openCol = openCol || (pm[j][i] == 0);
-				}
-				if (openRow || openCol)
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < size; j++) {
+				int s = 0;
+				for (int p = 0; p < 3; p++)
+					s += (pc[p][i][j] != 0) ? 1 : 0;
+				// if one or more players have an opening  
+				if (s <= 1)
 					return false;
-				openDiag1 = openDiag1 || (pm[i][i] == 0);
-				openDiag2 = openDiag1 || (pm[i][size - 1 - i] == 0);
 			}
-			if (openDiag1 || openDiag2)
+			int s = 0;
+			for (int p = 0; p < 3; p++)
+				s += (pd[p][i] != 0) ? 1 : 0;			
+			if (s <= 1)
 				return false;
 		}
 		return true;
@@ -160,14 +157,18 @@ public class BoardUltimate implements Board, Serializable {
 		if (wasWin != nowWin) {
 			pc[p][0][x] += inc;
 			pc[p][1][y] += inc;
-			if (x == y)
-				pd[p][0] += inc;
-			if (x == size - 1 - y)
-				pd[p][1] += inc;
+			pd[p][0] += (x == y) ? inc : 0;
+			pd[p][1] += (x == size - 1 - y) ? inc : 0;
 			pm[x][y] = nowWin ? color : 0;
 		}
-		if (isSecondaryDraw(x, y))
+		if (isSecondaryDraw(x, y)) {
 			pm[x][y] = 2;
+			// update draw counters
+			pc[2][0][x] += inc; 
+			pc[2][1][y] += inc;
+			pd[2][0] += (x == y) ? inc : 0;
+			pd[2][1] += (x == size - 1 - y) ? inc : 0;
+		}
 	}
 
 	public int get(int x, int y, int z, int w) {
