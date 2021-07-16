@@ -75,6 +75,7 @@ public class BoardUltimate implements Board, Serializable {
 	}
 
 	public void makeMove(Node node, int color) {
+		assert (node.getParent() == currentNode);
 		set(node.getMove(), color);
 		currentNode = node;
 	}
@@ -133,13 +134,13 @@ public class BoardUltimate implements Board, Serializable {
 				int s = 0;
 				for (int p = 0; p < 3; p++)
 					s += (pc[p][i][j] != 0) ? 1 : 0;
-				// if one or more players have an opening  
+				// if one or more players have an opening
 				if (s <= 1)
 					return false;
 			}
 			int s = 0;
 			for (int p = 0; p < 3; p++)
-				s += (pd[p][i] != 0) ? 1 : 0;			
+				s += (pd[p][i] != 0) ? 1 : 0;
 			if (s <= 1)
 				return false;
 		}
@@ -164,7 +165,7 @@ public class BoardUltimate implements Board, Serializable {
 		if (isSecondaryDraw(x, y)) {
 			pm[x][y] = 2;
 			// update draw counters
-			pc[2][0][x] += inc; 
+			pc[2][0][x] += inc;
 			pc[2][1][y] += inc;
 			pd[2][0] += (x == y) ? inc : 0;
 			pd[2][1] += (x == size - 1 - y) ? inc : 0;

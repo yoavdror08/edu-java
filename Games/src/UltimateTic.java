@@ -1,5 +1,4 @@
 import java.util.*;
-import java.util.List;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.Border;

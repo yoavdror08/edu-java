@@ -33,7 +33,7 @@ public class MCTS implements Algorithm {
 
 	public Node search(Board board) {
 		Node<MCData> leaf;
-		Node<MCData> current = board.getCurrentNode();
+		Node<MCData> current = (Node<MCData>)board.getCurrentNode();
 		timer = System.currentTimeMillis();
 		while (resources_left()) {
 			leaf = traverse(board, current); // select + expand

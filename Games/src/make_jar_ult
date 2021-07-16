@@ -1,3 +1,4 @@
+javac -d ../bin *.java
 cd ../bin
 jar cfm UltimateTicTacToe.jar ../src/Manifest_ult.txt BoardUltimate.class UltimateTic*.class Node.class Board.class MCData.class NMData.class MCTS.class Algorithm.class
 
