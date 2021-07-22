@@ -1,3 +1,0 @@
-cd ../bin
-jar cfm 3DTTT.jar ../src/Manifest.txt Board3d.class ThreeTic*.class Move.class
-

@@ -1,3 +1,4 @@
+package com.shaharyi.strategy;
 
 public interface Board {
 	public Board deepClone();

@@ -1,3 +1,5 @@
+package com.shaharyi.strategy;
+
 import static java.lang.Math.*;
 
 public class Board3d {

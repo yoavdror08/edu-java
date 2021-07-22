@@ -1,3 +1,4 @@
+package com.shaharyi.strategy;
 
 public class Node<T> {
 	private int[] move;

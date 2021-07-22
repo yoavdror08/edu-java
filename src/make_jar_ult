@@ -1,0 +1,6 @@
+#!/bin/bash -x
+
+javac -d ../bin main/java/com/shaharyi/strategy/*.java
+cd ../bin
+jar cfm UltimateTicTacToe.jar ../src/Manifest_ult.txt com/shaharyi/strategy/*.class
+

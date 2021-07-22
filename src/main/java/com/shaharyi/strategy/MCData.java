@@ -1,3 +1,4 @@
+package com.shaharyi.strategy;
 
 class MCData {
 	private int player;

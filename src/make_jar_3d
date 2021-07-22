@@ -1,0 +1,12 @@
+#!/bin/bash -x
+
+dir="main/java/com/shaharyi/strategy/"
+
+javac -d ../bin ${dir}Board3d.java ${dir}ThreeTic.java ${dir}Move.java
+
+cd ../bin
+
+dir="com/shaharyi/strategy/"
+
+jar cfm 3DTTT.jar ../src/Manifest.txt ${dir}Board3d.class ${dir}ThreeTic*.class ${dir}Move.class
+

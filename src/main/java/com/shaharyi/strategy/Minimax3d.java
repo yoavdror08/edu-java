@@ -1,3 +1,5 @@
+package com.shaharyi.strategy;
+
 import java.util.Scanner;
 
 public class Minimax3d {
