@@ -118,16 +118,16 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 	}
 
 	Node randomMove(Board board) {
-		board.generateMoves(-1);
+        board.generateMoves(-1);
 		Node[] children = board.getCurrentNode().getChildren();
 		int i = rand.nextInt(children.length);
 		return children[i];
 	}
 
 	Node searchMove() {
-
-		// Move move = algorithm.monte_carlo_tree_search(board);
-		return randomMove(board);
+		//Node node = algorithm.search(board);
+		Node node = randomMove(board);
+		return node;
 	}
 
 	public void actionPerformed(ActionEvent evt) {
