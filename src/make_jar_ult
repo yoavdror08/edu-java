@@ -1,5 +1,8 @@
 #!/bin/bash -x
 
+# -p stands for parents, but here only don't fail if target exists
+mkdir -p ../bin
+
 javac -d ../bin main/java/com/shaharyi/strategy/*.java
 cd ../bin
 jar cfm UltimateTicTacToe.jar ../src/Manifest_ult.txt com/shaharyi/strategy/*.class
