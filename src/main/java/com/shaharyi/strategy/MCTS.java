@@ -59,7 +59,8 @@ public class MCTS implements Algorithm, NodeFactory {
         Node<MCData> n = current;
         while (n.getParent()!=null) 
             n = n.getParent();
-        System.out.println("total simulations=" + n.getData().getNumRollouts());        
+        System.out.println("total simulations=" + n.getData().getNumRollouts());
+        board.print();
 		return bestChild(current);
 	}
 
@@ -107,7 +108,7 @@ public class MCTS implements Algorithm, NodeFactory {
 			double w = c.getData().getNumWins();
 			int n = c.getData().getNumRollouts();
 			int N = node.getData().getNumRollouts();
-			double uctValue = (w / n) + C * Math.sqrt(Math.log(N) / n);
+			double uctValue = (w / n) + C * Math.sqrt(10*Math.log(N) / n);
 //            double uctValue = totValue / (nVisits + EPSILON)
 //                    + Math.sqrt(Math.log(parentVisits + 1) / (nVisits + EPSILON)) + rand.nextDouble() * EPSILON;
             // small random number to break ties randomly in unexpanded nodes

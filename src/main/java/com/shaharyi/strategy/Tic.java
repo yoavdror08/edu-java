@@ -104,10 +104,14 @@ public class Tic extends JPanel implements ActionListener, ItemListener {
 	}
 
 	public boolean checkGameOver() {
-		boolean draw = board.isFull();
-		if (board.getWinner() != 0 || draw) {
+		boolean draw = false;
+		int winner = board.getWinner();
+		if (winner == 0)
+		    draw = board.isFull();
+		if (winner != 0 || draw) {
 			String msg = draw ? "It's a draw!" : "The winner is " + currentPlayer + "!";
 			JOptionPane.showMessageDialog(this, msg, "Game Over", JOptionPane.INFORMATION_MESSAGE);
+			board.print();
 			restart();
 			return true;
 		}
