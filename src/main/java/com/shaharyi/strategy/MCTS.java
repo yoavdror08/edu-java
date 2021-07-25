@@ -52,11 +52,15 @@ public class MCTS implements Algorithm, NodeFactory {
 		return bestChild(current);
 	}
 
+	// Select - child with zero rollouts
+	// Expand - if no children creata all and select one
 	Node traverse(Board board, Node<MCData> node) {
 		while (fullyExpanded(node)) {
 			node = bestUCT(node);
 			board.makeMove(node, node.getData().getPlayer());
 		}
+		if (node.getChildren() == null)
+		    board.generateMoves(-node.getData().getPlayer());
 
 		Node unvisited = pickUnivisted(node.getChildren());
 		// in case no children are present / node is terminal
@@ -100,6 +104,9 @@ public class MCTS implements Algorithm, NodeFactory {
 
 	// function for the result of the simulation
 	int rollout(Board board, Node<MCData> node) {
+	    // make this (unvisited) move
+        board.makeMove(node, node.getData().getPlayer());
+	    
 		while (nonTerminal(board)) {
 			node = rolloutPolicy(board, node);
 			board.makeMove(node, node.getData().getPlayer());
@@ -110,7 +117,7 @@ public class MCTS implements Algorithm, NodeFactory {
 	// function for randomly selecting a child node
 	Node rolloutPolicy(Board board, Node<MCData> node) {
 		if (node.getChildren() == null)
-			board.generateMoves(node.getData().getPlayer());
+			board.generateMoves(-node.getData().getPlayer());
 
 		Node[] children = node.getChildren();
 		int i = rand.nextInt(children.length);
@@ -127,12 +134,15 @@ public class MCTS implements Algorithm, NodeFactory {
 		backpropagateToRoot(board, node.getParent(), result);
 	}
 
-	void backpropagate(Board board, Node<MCData> node, int result) {
-		if (node.getParent() == board.getCurrentNode())
-			backpropagateToRoot(board, node, result);
-		node.getData().update(result);
-		board.undoMove(node);
-		backpropagate(board, node.getParent(), result);
+	void backpropagate(Board board, Node<MCData> leaf, int result) {
+	    Node<MCData> current = board.getCurrentNode();
+		if (current == leaf.getParent()) {
+			backpropagateToRoot(board, current, result);
+			return;
+		}
+		current.getData().update(result);
+		board.undoMove(current);
+		backpropagate(board, leaf, result);
 	}
 
 	/*
@@ -152,8 +162,6 @@ public class MCTS implements Algorithm, NodeFactory {
 	}
 
 	Node pickUnivisted(Node[] nodes) {
-	    if (nodes == null)
-	        return null;
 		for (Node<MCData> node : nodes) {
 			if (node.getData().getNumRollouts() == 0)
 				return node;

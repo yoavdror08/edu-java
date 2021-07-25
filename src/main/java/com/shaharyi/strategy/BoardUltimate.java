@@ -106,6 +106,9 @@ public class BoardUltimate implements Board, Serializable {
 				}
 	}
 
+	// Our chosen variation of rule:
+	// If you were sent to a local board that is terminal,
+	// you are free to choose from any legit board left.
 	public void generateMoves(int color) {
 		int[] pos = currentNode.getMove();
 		int prow = pos[2];
