@@ -2,7 +2,16 @@ package com.shaharyi.strategy;
 
 import static java.lang.Math.*;
 
-public class Board2d {
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Board2d implements Board, Serializable {
 	private int size;
 	private int nTicks; // tick counter
 	private int[][] m; // matrix
@@ -12,7 +21,12 @@ public class Board2d {
 
 	private final int[] COLOR = { -1, 1 };
 
-	public Board2d(int size) {
+	private Node currentNode;
+
+    NodeFactory nodeFactory;
+
+    public Board2d(int size, NodeFactory nodeFactory) {
+        this.nodeFactory = nodeFactory;
 		nTicks = 0;
 		this.size = size;
 		m = new int[size][size];
@@ -20,6 +34,32 @@ public class Board2d {
 		d = new int[2][2];
 		maxScore = (int) pow(size, 2 * size);
 	}
+
+   public Board deepClone() {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(this);
+
+            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+            ObjectInputStream ois = new ObjectInputStream(bais);
+            return (Board) ois.readObject();
+        } catch (IOException e) {
+            return null;
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
+    }
+
+
+    public Node getCurrentNode() {
+        return currentNode;
+    }
+
+    public int get(int[] pos) {
+        int x = pos[0], y = pos[1];
+        return m[x][y];
+    }
 
 	public int getMaxScore() {
 		return maxScore;
@@ -33,44 +73,36 @@ public class Board2d {
 		return (isFull() || getWinner() != 0);
 	}
 
-	public void makeMove(Move move, int color) {
-		set(move.getPosition(), color);
-	}
+    public void makeMove(Node node, int color) {
+        assert (node.getParent() == currentNode);
+        set(node.getMove(), color);
+        currentNode = node;
+    }
 
-	public void undoMove(Move move) {
-		clear(move.getPosition());
-	}
+    public Node createNode(int[] move, int color) {
+        Node node = nodeFactory.createNode(currentNode, move, color);
+        return node;
+    }
 
-	public Move[] generateMoves() {
-		Move[] moves = new Move[size * size - nTicks];
-		int n = 0;
+    public void undoMove(Node node) {
+        clear(node.getMove());
+        currentNode = node.getParent();
+    }
+
+	public void generateMoves(int color) {	    
+        List<Node> moves = new ArrayList<Node>();
 		for (int i = 0; i < size; i++)
 			for (int j = 0; j < size; j++)
-				if (m[i][j] == 0)
-					moves[n++] = new Move(new int[] { i, j });
-		return moves;
-	}
-
-	public void sortMoves(Move[] moves) {
-		for (int i = 0; i < moves.length; i++) {
-			for (int j = i + 1; j < moves.length; j++) {
-				if (moves[i].getScore() < moves[j].getScore()) {
-					Move t = moves[i];
-					moves[i] = moves[j];
-					moves[j] = t;
+				if (m[i][j] == 0) {
+                    Node n = nodeFactory.createNode(
+                            currentNode, 
+                            new int[] { i, j }, 
+                            color);
+		            moves.add(n);
 				}
-			}
-		}
-	}
-
-	public void orderMoves(Move[] moves, int color) {
-
-		for (int i = 0; i < moves.length; i++) {
-			makeMove(moves[i], color);
-			moves[i].setScore(color * score());
-			undoMove(moves[i]);
-		}
-		sortMoves(moves);
+		
+        Node[] children = (Node[]) moves.toArray(new Node[moves.size()]);
+        currentNode.setChildren(children);
 	}
 
 	void updateLines(int p, int x, int y, int inc) {

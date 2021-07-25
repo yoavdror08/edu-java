@@ -5,6 +5,8 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.Border;
 
+import com.shaharyi.strategy.UltimateTic.BoardButton;
+
 import java.awt.event.*;
 
 public class Tic extends JPanel implements ActionListener, ItemListener {
@@ -17,9 +19,10 @@ public class Tic extends JPanel implements ActionListener, ItemListener {
 	private SingleBoard sboard;
 	private char currentPlayer = 'X';
 
-	public static int size = 4;
+	public static int size = 3;
 	public static int depth = 3;
 
+    MCTS algorithm;
 	Board2d board;
 	int color = 1;
 
@@ -81,18 +84,18 @@ public class Tic extends JPanel implements ActionListener, ItemListener {
 
 	public void actionPerformed(ActionEvent evt) {
 		BoardButton b = (BoardButton) evt.getSource();
+        int[] pos = new int[] { b.row, b.col };
+        Node node = board.createNode(pos, 1);
+        board.makeMove(node, 1);
 		setValue(b.row, b.col, currentPlayer);
 		System.out.println(b);
-		Move move = new Move(new int[] { b.row, b.col });
-		board.makeMove(move, 1);
 
 		if (!checkGameOver()) {
 			currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
-			int maxScore = board.getMaxScore();
-			move = negamaxEval(board, depth, -maxScore, +maxScore, -1);
-			System.out.println(move);
-			board.makeMove(move, -1);
-			int[] p = move.getPosition();
+			node = algorithm.search(board);
+            System.out.println(node);
+            board.makeMove(node, -1);
+            int[] p = node.getMove();
 			setValue(p[0], p[1], currentPlayer);
 			checkGameOver();
 			currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
@@ -112,7 +115,8 @@ public class Tic extends JPanel implements ActionListener, ItemListener {
 	}
 
 	public Tic() {
-		board = new Board2d(size);
+        algorithm = new MCTS();		
+        board = new Board2d(size, algorithm);
 		JPanel settingsPanel = new JPanel(new FlowLayout());
 		sizeCombo = new JComboBox<Integer>(new Integer[] { 3, 4, 5, 6 });
 		sizeCombo.setSelectedItem(size);
@@ -149,28 +153,6 @@ public class Tic extends JPanel implements ActionListener, ItemListener {
 		frm = new JFrame("Tic-Tac-Toe");
 		frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		restart();
-	}
-
-	public static Move negamaxEval(Board2d board, int depth, int alpha, int beta, int color) {
-		if (board.isTerminal() || depth == 0)
-			return new Move(color * board.score());
-		Move[] moves = board.generateMoves();
-		board.orderMoves(moves, color);
-		Move best = null;
-		for (int i = 0; i < moves.length && alpha < beta; i++) {
-			board.makeMove(moves[i], color);
-			Move move = negamaxEval(board, depth - 1, -beta, -alpha, -color);
-			int score = -move.getScore();
-			moves[i].setScore(score);
-			if (best == null || score > best.getScore())
-				best = moves[i];
-			board.undoMove(moves[i]);
-			if (score > alpha) {
-				alpha = score;
-				best = moves[i];
-			}
-		}
-		return best;
 	}
 
 	@Override

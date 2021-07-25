@@ -29,4 +29,6 @@ public interface Board {
 
 	// -1/0/1/2, 2 means draw
 	public int getWinner();
+	
+    public int score();	
 }

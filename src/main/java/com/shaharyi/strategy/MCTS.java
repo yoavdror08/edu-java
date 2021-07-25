@@ -41,30 +41,51 @@ public class MCTS implements Algorithm, NodeFactory {
     }
 	
 	public Node search(Board board) {
+	    int simulation_result = 0;
 		Node<MCData> leaf;
 		Node<MCData> current = (Node<MCData>)board.getCurrentNode();
 		timer = System.currentTimeMillis();
-		while (resources_left()) {
+		boolean done = false;
+		while (resources_left() && !done) {
 			leaf = traverse(board, current); // select + expand
-			int simulation_result = rollout(board, leaf);
-			backpropagate(board, leaf, simulation_result);
+			if (leaf == null)
+			    done = true;			
+			else {
+			    simulation_result = rollout(board, leaf);
+			    backpropagate(board, leaf, current, simulation_result);
+			}
 		}
+        System.out.println("done=" + done);
+        System.out.println("simulations=" + current.getData().getNumRollouts());
+        Node<MCData> n = current;
+        while (n.getParent()!=null) 
+            n = n.getParent();
+        System.out.println("total simulations=" + n.getData().getNumRollouts());        
 		return bestChild(current);
 	}
 
 	// Select - child with zero rollouts
 	// Expand - if no children creata all and select one
 	Node traverse(Board board, Node<MCData> node) {
+	    if (node.getChildren() != null && node.getChildren().length == 0)
+	        return null;
+        Node orig = node;
 		while (fullyExpanded(node)) {
 			node = bestUCT(node);
 			board.makeMove(node, node.getData().getPlayer());
 		}
 		if (node.getChildren() == null)
 		    board.generateMoves(-node.getData().getPlayer());
-
 		Node unvisited = pickUnivisted(node.getChildren());
+		
+		if (unvisited == null)
+            while (node != orig) {
+                board.undoMove(node);
+                node = node.getParent();
+            }
+		return unvisited;
 		// in case no children are present / node is terminal
-		return (unvisited != null) ? unvisited : node;
+//		return (unvisited != null) ? unvisited : node;
 	}
 
 	// Are all children visited?
@@ -124,25 +145,21 @@ public class MCTS implements Algorithm, NodeFactory {
 		return children[i];
 	}
 
-	/*
-	 * back-propagate without updating the board
-	 */
-	void backpropagateToRoot(Board board, Node<MCData> node, int result) {
-		if (node.getParent() == null)
-			return;
-		node.getData().update(result);
-		backpropagateToRoot(board, node.getParent(), result);
-	}
-
-	void backpropagate(Board board, Node<MCData> leaf, int result) {
-	    Node<MCData> current = board.getCurrentNode();
-		if (current == leaf.getParent()) {
-			backpropagateToRoot(board, current, result);
-			return;
-		}
-		current.getData().update(result);
-		board.undoMove(current);
-		backpropagate(board, leaf, result);
+	void backpropagate(Board board, Node<MCData> leaf, Node<MCData> current, int result) {
+	    boolean update = false;
+	    boolean undo = true;
+	    Node<MCData> node = board.getCurrentNode();
+	    while (node != null) {
+    		if (node == leaf)
+    			update = true;
+    		if (node == current)
+    		    undo = false;
+	        if (update)
+	            node.getData().update(result);
+	        if (undo)
+	            board.undoMove(node);
+    		node = node.getParent();
+	    }
 	}
 
 	/*
