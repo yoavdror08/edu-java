@@ -1,0 +1,14 @@
+#!/bin/bash -x
+
+# -p stands for parents, but here only don't fail if target exists
+mkdir -p ../bin
+
+dir="main/java/com/shaharyi/strategy/"
+
+javac -d ../bin ${dir}Board2d.java ${dir}Tic.java ${dir}Move.java
+
+cd ../bin
+
+dir="com/shaharyi/strategy/"
+
+jar cfm 2DTTT.jar ../src/Manifest.txt ${dir}Board2d.class ${dir}Tic*.class ${dir}Move.class

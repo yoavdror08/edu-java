@@ -171,7 +171,7 @@ public class Board3d {
 			}
 			for (int k = 0; k < 4; k++) {
 				if (pd[p][k] == size)
-					return p;
+					return COLOR[p];
 			}
 		}
 		return 0;
