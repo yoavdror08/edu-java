@@ -1,6 +1,6 @@
 package com.shaharyi.strategy;
 
-class MCData {
+public class MCData {
 	private int player;
 	private double numWins;
 	private int numRollouts;

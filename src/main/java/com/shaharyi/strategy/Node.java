@@ -7,7 +7,7 @@ public class Node<T> {
 	private Node parent;
 	private Node[] children;
 
-	public Node(Node parent, int[] move, int player) {
+	public Node(Node parent, int[] move) {
 		this.data = null;
 		this.move = move;
 		this.parent = parent;

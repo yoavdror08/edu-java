@@ -125,8 +125,8 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 	}
 
 	Node searchMove() {
-		//Node node = algorithm.search(board);
-		Node node = randomMove(board);
+		Node node = algorithm.search(board);
+		//Node node = randomMove(board);
 		return node;
 	}
 
@@ -165,8 +165,8 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 
 	public UltimateTic() {
 		rand = new Random();
-		board = new BoardUltimate(size);
 		algorithm = new MCTS();
+        board = new BoardUltimate(size, algorithm);
 		JPanel settingsPanel = new JPanel(new FlowLayout());
 		sizeCombo = new JComboBox<Integer>(new Integer[] { 3, 4, 5, 6 });
 		sizeCombo.setSelectedItem(size);
@@ -215,7 +215,7 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 
 	public static Node<NMData> negamaxEval(BoardUltimate board, int depth, int alpha, int beta, int color) {
 		if (board.isTerminal() || depth == 0) {
-			Node<NMData> node = new Node<NMData>(board.getCurrentNode(), null, color);
+			Node<NMData> node = new Node<NMData>(board.getCurrentNode(), null);
 			node.getData().setScore(color * board.score());
 		}
 		board.generateMoves(color);

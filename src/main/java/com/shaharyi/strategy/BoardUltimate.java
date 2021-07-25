@@ -33,10 +33,12 @@ public class BoardUltimate implements Board, Serializable {
 	}
 
 	private int maxScore; // stands for infinity in board evaluations
+    NodeFactory nodeFactory;
 
 	private final int[] COLOR = { -1, 1 };
 
-	public BoardUltimate(int size) {
+	public BoardUltimate(int size, NodeFactory nodeFactory) {
+	    this.nodeFactory = nodeFactory;
 		this.size = size;
 		nTicks = 0;
 		sTicks = new int[size][size];
@@ -82,8 +84,8 @@ public class BoardUltimate implements Board, Serializable {
 		currentNode = node;
 	}
 
-	public Node createNode(int[] move, int color) {
-		Node node = new Node(currentNode, move, color);
+    public Node createNode(int[] move, int color) {
+		Node node = nodeFactory.createNode(currentNode, move, color);
 		return node;
 	}
 
@@ -95,8 +97,13 @@ public class BoardUltimate implements Board, Serializable {
 	private void genInnerMoves(int color, int prow, int pcol, List<Node> moves) {
 		for (int j = 0; j < size; j++)
 			for (int k = 0; k < size; k++)
-				if (sm[prow][pcol][j][k] == 0)
-					moves.add(new Node(currentNode, new int[] { prow, pcol, j, k }, color));
+				if (sm[prow][pcol][j][k] == 0) {
+				    Node n = nodeFactory.createNode(
+				            currentNode, 
+				            new int[] { prow, pcol, j, k }, 
+				            color);
+					moves.add(n);
+				}
 	}
 
 	public void generateMoves(int color) {
@@ -111,6 +118,7 @@ public class BoardUltimate implements Board, Serializable {
 				for (int j = 0; j < size; j++)
 					if (pm[i][j] == 0)
 						genInnerMoves(color, i, j, moves);
+		// convert moves to array, into the given array 
 		Node[] children = (Node[]) moves.toArray(new Node[moves.size()]);
 		currentNode.setChildren(children);
 	}

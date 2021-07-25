@@ -15,7 +15,7 @@ import java.util.*;
  *   nominator: +1 if win for this node's player, +0.5 for draw.
  *   denom:     +1 always.
  */
-public class MCTS implements Algorithm {
+public class MCTS implements Algorithm, NodeFactory {
 
 	final static double EPSILON = 1e-6;
 	Runtime runtime = Runtime.getRuntime();
@@ -33,6 +33,13 @@ public class MCTS implements Algorithm {
 		 */
 	}
 
+    public Node createNode(Node parent, int[] move, int color) {
+        Node<MCData> n = new Node<>(parent, move);
+        MCData data = new MCData(color);
+        n.setData(data);
+        return n;
+    }
+	
 	public Node search(Board board) {
 		Node<MCData> leaf;
 		Node<MCData> current = (Node<MCData>)board.getCurrentNode();
@@ -58,6 +65,8 @@ public class MCTS implements Algorithm {
 
 	// Are all children visited?
 	boolean fullyExpanded(Node<MCData> node) {
+	    if (node.getChildren() == null)
+	        return false;
 		for (Node<MCData> child : node.getChildren()) {
 			if (child.getData().getNumRollouts() == 0)
 				return false;
@@ -86,7 +95,7 @@ public class MCTS implements Algorithm {
 	}
 
 	boolean nonTerminal(Board board) {
-		return board.isTerminal();
+		return !board.isTerminal();
 	}
 
 	// function for the result of the simulation
@@ -143,6 +152,8 @@ public class MCTS implements Algorithm {
 	}
 
 	Node pickUnivisted(Node[] nodes) {
+	    if (nodes == null)
+	        return null;
 		for (Node<MCData> node : nodes) {
 			if (node.getData().getNumRollouts() == 0)
 				return node;
