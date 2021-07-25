@@ -16,3 +16,7 @@ $ cd src
 $ ./make_jar_3d
 $ java -jar ../bin/3DTTT.jar
 ```
+
+## TO DO
+* Check why simple 3x3 "Tic" loses, no matter what explocation parameter "C" I try.
+* Change to use snapshot of the board before rollout, instead of undoing the moves.
