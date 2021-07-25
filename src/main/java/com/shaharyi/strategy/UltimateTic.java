@@ -16,7 +16,7 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 	// machine, still on, human, draw
 	private final static Color[] TICK_COLOR = { Color.YELLOW, Color.GRAY, Color.GREEN, Color.DARK_GRAY };
 	static JFrame frm;
-	static UltimateTic threeTic = null;
+	static UltimateTic ulTic = null;
 
 	JComboBox<Integer> depthCombo;
 	JComboBox<Integer> sizeCombo;
@@ -196,13 +196,13 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 	}
 
 	public static void restart() {
-		if (threeTic != null)
-			frm.remove(threeTic);
-		threeTic = new UltimateTic();
+		if (ulTic != null)
+			frm.remove(ulTic);
+		ulTic = new UltimateTic();
 		Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
-		threeTic.setBorder(padding);
+		ulTic.setBorder(padding);
 		frm.getContentPane().setLayout(new BorderLayout());
-		frm.getContentPane().add(threeTic, BorderLayout.CENTER);
+		frm.getContentPane().add(ulTic, BorderLayout.CENTER);
 		frm.pack();
 		frm.setVisible(true);
 	}
