@@ -109,9 +109,9 @@ public class Tic extends JPanel implements ActionListener, ItemListener {
 		if (winner == 0)
 		    draw = board.isFull();
 		if (winner != 0 || draw) {
+            board.print();
 			String msg = draw ? "It's a draw!" : "The winner is " + currentPlayer + "!";
 			JOptionPane.showMessageDialog(this, msg, "Game Over", JOptionPane.INFORMATION_MESSAGE);
-			board.print();
 			restart();
 			return true;
 		}
