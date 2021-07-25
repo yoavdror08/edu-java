@@ -2,12 +2,9 @@ package com.shaharyi.strategy;
 
 import java.util.*;
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.Border;
-
-import com.shaharyi.strategy.UltimateTic.BoardButton;
-
-import java.awt.event.*;
 
 public class Tic extends JPanel implements ActionListener, ItemListener {
 

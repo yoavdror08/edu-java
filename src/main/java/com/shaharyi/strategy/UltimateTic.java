@@ -9,10 +9,6 @@ import java.awt.event.*;
 
 public class UltimateTic extends JPanel implements ActionListener, ItemListener {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	// machine, still on, human, draw
 	private final static Color[] TICK_COLOR = { Color.YELLOW, Color.GRAY, Color.GREEN, Color.DARK_GRAY };
 	static JFrame frm;
