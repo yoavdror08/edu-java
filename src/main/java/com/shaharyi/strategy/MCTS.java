@@ -17,7 +17,6 @@ import java.util.*;
  */
 public class MCTS implements Algorithm, NodeFactory {
 
-	final static double EPSILON = 1e-6;
 	Runtime runtime = Runtime.getRuntime();
 	Random rand = new Random();
 	long allotedMillis = 10 * 1000;
@@ -100,22 +99,24 @@ public class MCTS implements Algorithm, NodeFactory {
 	}
 
 	Node bestUCT(Node<MCData> node) {
+	    double C = Math.sqrt(2.0);
+//	    final static double EPSILON = 1e-6;	    
 		Node<MCData> selected = null;
 		double bestValue = Double.MIN_VALUE;
 		for (Node<MCData> c : node.getChildren()) {
-			double totValue = c.getData().getNumWins();
-			int nVisits = c.getData().getNumRollouts();
-			int parentVisits = node.getData().getNumRollouts();
-			double uctValue = totValue / (nVisits + EPSILON)
-					+ Math.sqrt(Math.log(parentVisits + 1) / (nVisits + EPSILON)) + rand.nextDouble() * EPSILON;
-			// small random number to break ties randomly in unexpanded nodes
+			double w = c.getData().getNumWins();
+			int n = c.getData().getNumRollouts();
+			int N = node.getData().getNumRollouts();
+			double uctValue = (w / n) + C * Math.sqrt(Math.log(N) / n);
+//            double uctValue = totValue / (nVisits + EPSILON)
+//                    + Math.sqrt(Math.log(parentVisits + 1) / (nVisits + EPSILON)) + rand.nextDouble() * EPSILON;
+            // small random number to break ties randomly in unexpanded nodes
 			// System.out.println("UCT value = " + uctValue);
 			if (uctValue > bestValue) {
 				selected = c;
 				bestValue = uctValue;
 			}
 		}
-		// System.out.println("Returning: " + selected);
 		return selected;
 	}
 
