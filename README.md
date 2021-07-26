@@ -25,3 +25,5 @@ We should signal that the search is exhausted (using this UCT).
 
 * UltimateBoard does not detect game-over well.  
 It also turns boards black for some reason.
+
+* Make Negamax algorithm work with Tic and the rest.
