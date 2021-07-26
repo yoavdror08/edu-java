@@ -16,10 +16,12 @@ import java.util.*;
  *   denom:     +1 always.
  */
 public class MCTS implements Algorithm, NodeFactory {
+    static double C_PARAM = Math.sqrt(2.0);
 
 	Runtime runtime = Runtime.getRuntime();
 	Random rand = new Random();
-	long allotedMillis = 10 * 1000;
+	long allotedMillis = 5 * 1000;
+	int NSIM = 100;
 	long timer;
 
 	// time, memory
@@ -39,53 +41,45 @@ public class MCTS implements Algorithm, NodeFactory {
         return n;
     }
 	
-	public Node search(Board board) {
+    public Node search(Board board) {
+        return search(board, NSIM);
+    }
+	public Node search(Board board, int nsim) {
 	    int simulation_result = 0;
 		Node<MCData> leaf;
 		Node<MCData> current = (Node<MCData>)board.getCurrentNode();
 		timer = System.currentTimeMillis();
-		boolean done = false;
-		while (resources_left() && !done) {
+		int i = 0;
+		while (resources_left() && i < nsim) {
 			leaf = traverse(board, current); // select + expand
-			if (leaf == null)
-			    done = true;			
-			else {
-			    simulation_result = rollout(board, leaf);
-			    backpropagate(board, leaf, current, simulation_result);
-			}
+		    simulation_result = rollout(board, leaf);
+		    backpropagate(board, leaf, current, simulation_result);
+		    i++;
 		}
-        System.out.println("done=" + done);
         System.out.println("simulations=" + current.getData().getNumRollouts());
         Node<MCData> n = current;
         while (n.getParent()!=null) 
             n = n.getParent();
         System.out.println("total simulations=" + n.getData().getNumRollouts());
         board.print();
-		return bestChild(current);
+        return bestUCT(current, 0);  //exploitation only        
+//		return bestChild(current);
 	}
 
 	// Select - child with zero rollouts
-	// Expand - if no children creata all and select one
+	// Expand - if no children create all and select one
 	Node traverse(Board board, Node<MCData> node) {
-	    if (node.getChildren() != null && node.getChildren().length == 0)
-	        return null;
-        Node orig = node;
-		while (fullyExpanded(node)) {
-			node = bestUCT(node);
-			board.makeMove(node, node.getData().getPlayer());
-		}
+	    while (nonTerminal(board) && fullyExpanded(node)) {
+            node = bestUCT(node);
+            board.makeMove(node, node.getData().getPlayer());
+        }
 		if (node.getChildren() == null)
 		    board.generateMoves(-node.getData().getPlayer());
 		Node unvisited = pickUnivisted(node.getChildren());
 		
-		if (unvisited == null)
-            while (node != orig) {
-                board.undoMove(node);
-                node = node.getParent();
-            }
-		return unvisited;
 		// in case no children are present / node is terminal
-//		return (unvisited != null) ? unvisited : node;
+		//@TODO but returning the node itself accumulates duplicate results
+		return (unvisited != null) ? unvisited : node;
 	}
 
 	// Are all children visited?
@@ -99,8 +93,11 @@ public class MCTS implements Algorithm, NodeFactory {
 		return true;
 	}
 
-	Node bestUCT(Node<MCData> node) {
-	    double C = Math.sqrt(2.0);
+    Node bestUCT(Node<MCData> node) {
+        return bestUCT(node, C_PARAM);
+    }
+        
+    Node bestUCT(Node<MCData> node, double cparam) {
 //	    final static double EPSILON = 1e-6;	    
 		Node<MCData> selected = null;
 		double bestValue = Double.MIN_VALUE;
@@ -108,7 +105,7 @@ public class MCTS implements Algorithm, NodeFactory {
 			double w = c.getData().getNumWins();
 			int n = c.getData().getNumRollouts();
 			int N = node.getData().getNumRollouts();
-			double uctValue = (w / n) + C * Math.sqrt(Math.log(N) / n);
+			double uctValue = (w / n) + cparam * Math.sqrt(Math.log(N) / n);
 //            double uctValue = totValue / (nVisits + EPSILON)
 //                    + Math.sqrt(Math.log(parentVisits + 1) / (nVisits + EPSILON)) + rand.nextDouble() * EPSILON;
             // small random number to break ties randomly in unexpanded nodes
@@ -122,7 +119,11 @@ public class MCTS implements Algorithm, NodeFactory {
 	}
 
 	boolean nonTerminal(Board board) {
-		return !board.isTerminal();
+		boolean t = board.isTerminal();
+		Node<MCData> node = board.getCurrentNode();
+		if (!t && node.getChildren() == null)
+	            board.generateMoves(-node.getData().getPlayer());
+		return !t && node.getChildren().length > 0;
 	}
 
 	// function for the result of the simulation

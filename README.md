@@ -18,5 +18,10 @@ $ java -jar ../bin/3DTTT.jar
 ```
 
 ## To Do
-* Check why simple 3x3 "Tic" loses, no matter what explocation parameter "C" I try.
+* In "Traverse()", in case no children are present / node is terminal, returning the node itself accumulates duplicate results.  
+We should signal that the search is exhausted (using this UCT).  
+
 * Change to use snapshot of the board before rollout, instead of undoing the moves.
+
+* UltimateBoard does not detect game-over well.  
+It also turns boards black for some reason.
