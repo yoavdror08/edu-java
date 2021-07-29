@@ -1,5 +1,5 @@
 package com.shaharyi.strategy;
 
-public interface Algorithm {
-	Node search(Board board);
+public interface Algorithm extends NodeFactory {
+	Node search(Board board);	
 }

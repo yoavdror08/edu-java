@@ -19,7 +19,7 @@ public class Tic extends JPanel implements ActionListener, ItemListener {
 	public static int size = 3;
 	public static int depth = 3;
 
-    MCTS algorithm;
+    Algorithm algorithm;
 	Board2d board;
 	int color = 1;
 

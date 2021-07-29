@@ -15,7 +15,7 @@ import java.util.*;
  *   nominator: +1 if win for this node's player, +0.5 for draw.
  *   denom:     +1 always.
  */
-public class MCTS implements Algorithm, NodeFactory {
+public class MCTS implements Algorithm {
     static double C_PARAM = Math.sqrt(2.0);
 
 	Runtime runtime = Runtime.getRuntime();
