@@ -117,7 +117,7 @@ public class Tic extends JPanel implements ActionListener, ItemListener {
 
 	public Tic() {
         algorithm = new MCTS();		
-        board = new Board2d(size, algorithm);
+        board = new Board2d(size, algorithm.getNodeFactory());
 		JPanel settingsPanel = new JPanel(new FlowLayout());
 		sizeCombo = new JComboBox<Integer>(new Integer[] { 3, 4, 5, 6 });
 		sizeCombo.setSelectedItem(size);

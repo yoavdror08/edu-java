@@ -15,7 +15,7 @@ import java.util.*;
  *   nominator: +1 if win for this node's player, +0.5 for draw.
  *   denom:     +1 always.
  */
-public class MCTS implements Algorithm {
+public class MCTS implements Algorithm, NodeFactory {
     static double C_PARAM = Math.sqrt(2.0);
 
 	Runtime runtime = Runtime.getRuntime();
@@ -24,6 +24,7 @@ public class MCTS implements Algorithm {
 	int NSIM = 100;
 	long timer;
 
+	
 	// time, memory
 	boolean resources_left() {
 		return (System.currentTimeMillis() < timer + allotedMillis);
@@ -33,6 +34,10 @@ public class MCTS implements Algorithm {
 		 * long freeMemory = runtime.freeMemory();
 		 */
 	}
+
+    public NodeFactory getNodeFactory() {
+        return this;
+    }
 
     public Node createNode(Node parent, int[] move, int color) {
         Node<MCData> n = new Node<>(parent, move);

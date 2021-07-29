@@ -23,7 +23,7 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 	public static int depth = 3;
 
 	Board board;
-	MCTS algorithm;
+	Algorithm algorithm;
 
 	int color = 1;
 	Random rand;
@@ -162,7 +162,7 @@ public class UltimateTic extends JPanel implements ActionListener, ItemListener 
 	public UltimateTic() {
 		rand = new Random();
 		algorithm = new MCTS();
-        board = new BoardUltimate(size, algorithm);
+        board = new BoardUltimate(size, algorithm.getNodeFactory());
 		JPanel settingsPanel = new JPanel(new FlowLayout());
 		sizeCombo = new JComboBox<Integer>(new Integer[] { 3, 4, 5, 6 });
 		sizeCombo.setSelectedItem(size);

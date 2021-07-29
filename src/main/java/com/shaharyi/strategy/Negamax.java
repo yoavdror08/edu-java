@@ -10,6 +10,10 @@ public class Negamax implements Algorithm, NodeFactory {
         maxScore = (int) pow(size, dimensions * size);
         this.depth = depth;
     }
+
+    public NodeFactory getNodeFactory() {
+        return this;
+    }
     
     public Node createNode(Node parent, int[] move, int color) {
         Node<NMData> n = new Node<>(parent, move);
