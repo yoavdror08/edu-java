@@ -1,3 +1,4 @@
+package com.shaharyi.cards;
 
 public class Card {
 	private int value;
@@ -6,11 +7,16 @@ public class Card {
 	private char[] COURT = { 'J', 'Q', 'K' };
 
 	private final char SPADES = '\u2660', HEARTS = '\u2665', DIAMONDS = '\u2666', CLUBS = '\u2663', JOKERS = '\u24BF';
+
 	private final char[] SUITS = { SPADES, HEARTS, DIAMONDS, CLUBS, JOKERS };
 
 	public Card(int value, int suit) {
 		this.value = value;
 		this.suit = suit;
+	}
+
+	public boolean equals(Card c) {
+		return c.value == value && c.suit == suit;
 	}
 
 	public int getValue() {

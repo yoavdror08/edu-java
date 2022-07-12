@@ -1,3 +1,4 @@
+package com.shaharyi.cards;
 
 public class Deck2 {
 	private Card[] cards;

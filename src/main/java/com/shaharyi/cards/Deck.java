@@ -1,3 +1,6 @@
+package com.shaharyi.cards;
+
+import com.shaharyi.node.Stack;
 
 public class Deck {
 	private Stack<Card> cards;
@@ -35,9 +38,8 @@ public class Deck {
 	public void shuffle() {
 		Deck d = new Deck(numJokers);
 		spillOn(d);
-		for (int i = 0; i < d.getCount(); i++) {
+		while (d.getCount() > 0)
 			push(d.popRandom());
-		}
 	}
 
 	public void push(Card c) {
@@ -62,8 +64,10 @@ public class Deck {
 			backup.push(cards.top());
 			c = cards.pop();
 		}
+		backup.pop();
 		while (!backup.isEmpty())
 			cards.push(backup.pop());
+		count--;
 		return c;
 	}
 
@@ -91,7 +95,7 @@ public class Deck {
 		Hand[] hands = new Hand[numHands];
 		for (int i = 0; i < numHands; i++) {
 			hands[i] = new Hand();
-		}		
+		}
 		for (int i = 0; i < numCards; i++) {
 			for (int j = 0; j < numHands; j++) {
 				if (cards.isEmpty()) {
