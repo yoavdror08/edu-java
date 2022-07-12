@@ -9,33 +9,28 @@ public class Main {
 	static Scanner scan = new Scanner(System.in);
 
 	public static void main(String[] args) {
-		Node<Card> hand = new Node<Card>(new Card(4, 1));
-		Deck d = new Deck(true, 0);
-		System.out.println(d);
-		d.shuffle();
-		System.out.println(d);
-		Hand[] hands = d.deal(4, 13);
-		for (int i = 0; i < hands.length; i++) {
-			System.out.println(hands[i]);
-		}
 		int score1 = 0, score2 = 0;
 		while (Math.max(score1, score2) < 5) {
 			int tricks = playRound();
 			score1 += tricks - 6;
 			score2 += 13 - tricks - 6;
-			System.out.println("score1: " + score1 + "\n" + "score2: " + score2);			
+			System.out.println("score1: " + score1 + "\n" + "score2: " + score2);
 		}
 	}
 
 	/**
-	 * 0, 2 = first couple
-	 * 1, 3 = second couple
+	 * Hands 0, 2 = first couple Hands 1, 3 = second couple
+	 * 
 	 * @return number of tricks for first couple (not the dealer)
 	 */
 	public static int playRound() {
 		Deck d = new Deck(true, 0);
+		System.out.println(d);
 		d.shuffle();
+		System.out.println(d);
 		Hand[] hands = d.deal(4, 13);
+		for (int i = 0; i < hands.length; i++)
+			System.out.println(hands[i]);
 		Card c = hands[3].top();
 		int trumps = c.getSuit();
 		System.out.println("Trumps: " + c);
@@ -45,15 +40,16 @@ public class Main {
 			if (taker % 2 == 0)
 				tricks++;
 		}
-		System.out.println("Total tricks: " +tricks);
+		System.out.println("Total tricks: " + tricks);
 		return tricks;
 	}
-/**
- * 
- * @param hands
- * @param trumps
- * @return taker index, in 0-3
- */
+
+	/**
+	 * 
+	 * @param hands
+	 * @param trumps
+	 * @return taker index, in 0-3
+	 */
 	public static int playTrick(Hand[] hands, int trumps) {
 		Node<Card> trick = new Node<Card>(null);
 		Card best = null;
@@ -81,8 +77,6 @@ public class Main {
 		int sa = a.getSuit();
 		int sb = b.getSuit();
 		boolean sameSuit = (sa == sb);
-		int va = a.getValue();
-		int vb = b.getValue();
-		return sameSuit && va > vb || sa == trumps && sb != trumps;
+		return sameSuit && a.diff(b) > 0 || sa == trumps && sb != trumps;
 	}
 }

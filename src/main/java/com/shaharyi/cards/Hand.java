@@ -42,7 +42,7 @@ public class Hand {
 		while (p != null) {
 			Card c = p.getValue();
 			if (match == (c.getSuit() == suit))
-				if (r == null || (c.getValue() - r.getValue()) * sign > 0)
+				if (r == null || c.diff(r) * sign > 0)
 					r = c;
 			p = p.getNext();
 		}
@@ -50,7 +50,7 @@ public class Hand {
 	}
 
 	public Card pop(int index) {
-		Node<Card> dummy = new Node<Card>(null, cards);		
+		Node<Card> dummy = new Node<Card>(null, cards);
 		Node<Card> p = cards, prev = dummy;
 		while (p != null && index > 0) {
 			prev = p;

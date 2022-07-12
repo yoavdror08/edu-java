@@ -17,7 +17,7 @@ public class Deck {
 		this(numJokers);
 		if (full) {
 			for (int i = 0; i < 13 * 4; i++) {
-				Card c = new Card(i % 13 + 2, i / 13);
+				Card c = new Card(i % 13 + 1, i / 13);
 				push(c);
 			}
 			for (int i = 0; i < numJokers; i++) {
