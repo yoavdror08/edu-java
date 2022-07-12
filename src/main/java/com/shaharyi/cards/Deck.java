@@ -17,11 +17,11 @@ public class Deck {
 		this(numJokers);
 		if (full) {
 			for (int i = 0; i < 13 * 4; i++) {
-				Card c = new Card(i % 13 + 1, i / 13 + 1);
+				Card c = new Card(i % 13 + 2, i / 13);
 				push(c);
 			}
 			for (int i = 0; i < numJokers; i++) {
-				push(new Card(1, 5));
+				push(new Card(1, 4));
 			}
 		}
 	}
