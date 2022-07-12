@@ -1,15 +1,16 @@
 package com.shaharyi.cards;
 
 public class Card {
-	private int value;
-	private int suit;
-
-	private char[] COURT = { 'J', 'Q', 'K' };
+	private int value; // in range 1..13
+	private int suit;  // in range 1..5 where 5 is for Jokers
 
 	private final char SPADES = '\u2660', HEARTS = '\u2665', DIAMONDS = '\u2666', CLUBS = '\u2663', JOKERS = '\u24BF';
 
 	private final char[] SUITS = { SPADES, HEARTS, DIAMONDS, CLUBS, JOKERS };
 
+	private final char[] COURT = { 'J', 'Q', 'K' };
+
+	
 	public Card(int value, int suit) {
 		this.value = value;
 		this.suit = suit;
