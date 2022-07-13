@@ -22,7 +22,7 @@ public class Algo {
 		int leadValue = lead.getValue();
 		int highestLead = max(trick, i);
 		boolean partnerTrumps = false;
-		if (i > 1) // my partner played
+		if (i > 1) // my partner has played
 			partnerTrumps = (trick[i - 2].getSuit() == trumps);
 		switch (i) {
 		case 1:
@@ -34,7 +34,6 @@ public class Algo {
 			if (c == null)
 				c = hand.findMinExcept(leadSuit);
 		}
-
 		return c;
 	}
 

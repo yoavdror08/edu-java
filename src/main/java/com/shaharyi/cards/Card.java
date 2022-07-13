@@ -16,19 +16,25 @@ public class Card {
 	}
 
 	/**
-	 * In Whist Ace > King.
-	 * So value of 1 is handled differently.
+	 * In Whist Ace > King. So value of 1 is handled differently.
+	 *
 	 * @param c
 	 * @return result of (this.value - c.value)
 	 */
 	public int diff(Card c) {
 		int v1 = value;
-		if (v1==1)
+		if (v1 == 1)
 			v1 = 14;
 		int v2 = c.value;
 		if (v2 == 1)
 			v2 = 14;
 		return v1 - v2;
+	}
+
+	public boolean betterThan(Card c, int trumps) {
+		int sa = suit;
+		boolean sameSuit = (suit == c.suit);
+		return sameSuit && diff(c) > 0 || suit == trumps && c.suit != trumps;
 	}
 
 	public boolean equals(Card c) {

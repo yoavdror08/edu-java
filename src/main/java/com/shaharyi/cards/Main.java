@@ -12,10 +12,15 @@ public class Main {
 	static Scanner scan = new Scanner(System.in);
 
 	public static void main(String[] args) {
+		System.out.println("Lets play Whist!" + "\n(99 to quit)");
 		int[] score = new int[2];
 		String[] teams = { "Your team", "My team" };
+		int round = 0;
 		while (Math.max(score[0], score[1]) < 5) {
+			round++;
+			System.out.println("\nRound No. " + round + " starts.");
 			int tricks = playRound();
+			System.out.println("Round " + round + " over. Your team total tricks: " + tricks);
 			int i = (tricks > 6) ? 0 : 1;
 			int points = Math.max(tricks, 13 - tricks) - 6;
 			System.out.println(teams[i] + " gets " + points + " points");
@@ -24,7 +29,7 @@ public class Main {
 				System.out.println(teams[t] + " score: " + score[t]);
 		}
 		int winner = (score[0] >= 5) ? 0 : 1;
-		System.out.println(teams[winner] + " wins!");
+		System.out.println("\nGame over.\n" + teams[winner] + " wins!");
 	}
 
 	/**
@@ -37,7 +42,6 @@ public class Main {
 //		System.out.println(d);
 		d.shuffle();
 //		System.out.println(d);
-		System.out.println("\nRound starts.");
 		Hand[] hands = d.deal(4, 13);
 		for (int i = 0; i < hands.length; i++)
 			System.out.println("#" + i + ": " + hands[i]);
@@ -52,7 +56,6 @@ public class Main {
 			if (taker % 2 == 1)
 				tricks++;
 		}
-		System.out.println("Round over. Your team total tricks: " + tricks);
 		return tricks;
 	}
 
@@ -63,6 +66,10 @@ public class Main {
 			System.out.format("%2d%6s", j, "");
 		System.out.print("\nPick: ");
 		int index = scan.nextInt();
+		if (index == 99) {
+			System.out.println("My pleasure, goodbye.");
+			System.exit(0);
+		}
 		Card c = hand.pop(index);
 		return c;
 	}
@@ -84,7 +91,7 @@ public class Main {
 			else
 				c = Algo.play(hands[player], trick, trumps, i);
 			System.out.println("Player #" + player + " played " + c);
-			if (best == null || better(c, best, trumps)) {
+			if (best == null || c.betterThan(best, trumps)) {
 				best = c;
 				taker = player;
 			}
@@ -93,12 +100,5 @@ public class Main {
 		}
 		System.out.println("Trick goes to player #" + taker + "\n");
 		return taker;
-	}
-
-	public static boolean better(Card a, Card b, int trumps) {
-		int sa = a.getSuit();
-		int sb = b.getSuit();
-		boolean sameSuit = (sa == sb);
-		return sameSuit && a.diff(b) > 0 || sa == trumps && sb != trumps;
 	}
 }
