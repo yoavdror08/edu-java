@@ -9,13 +9,15 @@ public class Main {
 	static Scanner scan = new Scanner(System.in);
 
 	public static void main(String[] args) {
-		int score1 = 0, score2 = 0;
-		while (Math.max(score1, score2) < 5) {
+		int[] score = new int[2];
+		while (Math.max(score[0], score[1]) < 5) {
 			int tricks = playRound();
-			score1 += tricks - 6;
-			score2 += 13 - tricks - 6;
-			System.out.println("score1: " + score1 + "\n" + "score2: " + score2);
+			int i = (tricks > 6) ? 0 : 1;
+			score[i] += Math.max(tricks, 13 - tricks) - 6;
+			System.out.println("You: " + score[0] + "\n" + "We: " + score[1]);
 		}
+		String winner = (score[0] >= 5) ? "You" : "We";
+		System.out.println(winner + " win!");
 	}
 
 	/**
@@ -30,18 +32,29 @@ public class Main {
 		System.out.println(d);
 		Hand[] hands = d.deal(4, 13);
 		for (int i = 0; i < hands.length; i++)
-			System.out.println(hands[i]);
+			System.out.println(i + ") " + hands[i]);
 		Card c = hands[3].top();
 		int trumps = c.getSuit();
 		System.out.println("Trumps: " + c);
 		int tricks = 0;
+		int taker = 0;
 		for (int t = 0; t < 13; t++) {
-			int taker = playTrick(hands, trumps);
+			taker = playTrick(hands, trumps, taker);
 			if (taker % 2 == 0)
 				tricks++;
 		}
-		System.out.println("Total tricks: " + tricks);
+		System.out.println("Your team total tricks: " + tricks);
 		return tricks;
+	}
+
+	public static Card userPlay(Hand hand) {
+		System.out.println("Your turn:\n" + hand);
+		for (int j = 0; j < hand.getCount(); j++)
+			System.out.print(j + " ".repeat(7));
+		System.out.print("\nPick: ");
+		int index = scan.nextInt();
+		Card c = hand.pop(index);
+		return c;
 	}
 
 	/**
@@ -50,26 +63,25 @@ public class Main {
 	 * @param trumps
 	 * @return taker index, in 0-3
 	 */
-	public static int playTrick(Hand[] hands, int trumps) {
-		Node<Card> trick = new Node<Card>(null);
+	public static int playTrick(Hand[] hands, int trumps, int player) {
+		Card[] trick = new Card[4];
 		Card best = null;
 		int taker = 0;
+		Card c;
 		for (int i = 0; i < 4; i++) {
-			System.out.println("Next to play:\n" + hands[i]);
-			for (int j = 0; j < hands[i].getCount(); j++) {
-				System.out.print(j + "       ");
-			}
-			System.out.print("\nPick: ");
-			int index = scan.nextInt();
-			Card c = hands[i].pop(index);
+			if (player == 0)
+				c = userPlay(hands[player]);
+			else
+				c = Algo.play(hands[player], trick, trumps, i);
+			System.out.println("Player #" + player + " played " + c);
 			if (best == null || better(c, best, trumps)) {
 				best = c;
-				taker = i;
+				taker = player;
 			}
-			trick.setNext(new Node<Card>(c, trick.getNext()));
+			trick[i] = c;
+			player = (player + 1) % 4;
 		}
-		System.out.println(trick.getNext());
-		System.out.println("\nTrick goes to " + taker);
+		System.out.println("Trick goes to " + taker + "\n");
 		return taker;
 	}
 

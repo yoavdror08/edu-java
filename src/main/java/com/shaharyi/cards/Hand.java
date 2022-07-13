@@ -15,6 +15,10 @@ public class Hand {
 		return count;
 	}
 
+	public boolean has(int suit) {
+		return findMax(suit) != null;
+	}
+
 	public void insert(Card c) {
 		cards = new Node<Card>(c, cards);
 		count++;
