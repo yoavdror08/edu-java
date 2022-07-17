@@ -32,7 +32,6 @@ public class Card {
 	}
 
 	public boolean betterThan(Card c, int trumps) {
-		int sa = suit;
 		boolean sameSuit = (suit == c.suit);
 		return sameSuit && diff(c) > 0 || suit == trumps && c.suit != trumps;
 	}
