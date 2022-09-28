@@ -7,14 +7,14 @@ With algorithms like Minimax, MCTS.
 ## Build and run 3D Tic-Tac-Toe (uses MiniMax Algorithm)
 ```
 $ cd src
-$ ./make_jar_ult
-$ java -jar ../bin/UltimateTicTacToe.jar
+$ ./make_jar_3d
+$ java -jar ../bin/3DTTT.jar
 ```
 ## Build and run Ultimate Tic-Tac-Toe (uses MCTS Algorithm)
 ```
 $ cd src
-$ ./make_jar_3d
-$ java -jar ../bin/3DTTT.jar
+$ ./make_jar_ult
+$ java -jar ../bin/UltimateTicTacToe.jar
 ```
 
 ## To Do
