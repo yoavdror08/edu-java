@@ -1,4 +1,4 @@
-import java.util.Scanner;
+package com.shaharyi.animals;
 
 class Main {
 

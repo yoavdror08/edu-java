@@ -2,6 +2,8 @@ package com.shaharyi.maze;
 
 import java.util.Random;
 
+import com.shaharyi.node.Stack;
+
 public class Maze {
 	public Mat mat;
 	private Random rand = new Random();

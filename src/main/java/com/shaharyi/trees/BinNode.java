@@ -1,3 +1,5 @@
+package com.shaharyi.trees;
+
 public class BinNode<T> {
   private T value;          // Node value
   private BinNode<T> right; // next Node

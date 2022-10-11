@@ -1,3 +1,5 @@
+package com.shaharyi.animals;
+
 public class BinNode<T> {
 	private BinNode<T> left;
 	private T value;

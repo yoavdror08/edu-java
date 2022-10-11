@@ -1,3 +1,5 @@
+package com.shaharyi.animals;
+
 import java.util.Scanner;
 
 class Stage2 {
@@ -5,7 +7,7 @@ class Stage2 {
 	static Scanner scanner = new Scanner(System.in);
 
 	public static void runGame() {
-		String fileName = "perfect_tree_pre_order.txt";
+		String fileName = "data/perfect_tree_pre_order.txt";
 		BinNode<String> r = TreeUtil.readFromFile(fileName);
 		guess(r);
 		TreeUtil.writeToFile(r, fileName);

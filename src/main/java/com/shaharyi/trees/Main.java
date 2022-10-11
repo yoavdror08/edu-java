@@ -1,3 +1,5 @@
+package com.shaharyi.trees;
+
 import java.util.*;
 
 class Main {
@@ -30,11 +32,7 @@ class Main {
 		return fromString(tokenizer);
 	}
 
-  public static int avg(BinNode<Integer> t) {
-    int min = findMin(t);
-    int max = findMax(t);
-    
-  }
+  
 	/* Construct from in-order with brackets */
 	public static BinNode<Integer> fromString(StringTokenizer tokenizer) {
 		if (!tokenizer.hasMoreElements())

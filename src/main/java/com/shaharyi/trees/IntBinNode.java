@@ -1,3 +1,5 @@
+package com.shaharyi.trees;
+
 public class IntBinNode {
   public static void main() {
     IntBinNode t15 = new IntBinNode(15);
