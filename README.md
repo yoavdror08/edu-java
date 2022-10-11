@@ -1,9 +1,12 @@
 # edu-java
 
+## com.shaharyi.floodfill
+* Uses recursion to flood-fill area.
+
 ## com.shaharyi.cards
-* Lets you play the game of Whist agains the computer
-* Uses either array or stack for deck
-* Uses linked list for cards in "hand"
+* Lets you play the game of Whist agains the computer.
+* Uses either array or stack for deck.
+* Uses linked list for cards in "hand".
 
 ## com.shaharyi.sheep
 * Finds how many sheep are captured starting a specified spot.
