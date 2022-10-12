@@ -1,7 +1,8 @@
 # edu-java
 
 ## com.shaharyi.floodfill
-* Uses recursion to flood-fill area.
+* Flood-fill area in several ways: recursion, stack, queue, scan-line algorithm
+* [Run in replit.com](https://replit.com/@shaharyi/FloodFill)
 
 ## com.shaharyi.cards
 * Lets you play the game of Whist agains the computer.
@@ -17,6 +18,12 @@
 * Solves game of Wordle puzzle
 * Uses linked list
 * Makes use of all possible 5-letter words found in `data/wordle_words.txt`
+* [Run in replit.com](https://replit.com/@shaharyi/Wordle)
+
+## com.shaharyi.maze
+* Create maze using recursion
+* Solve maze using recursion
+* [Run in replit.com](https://replit.com/@shaharyi/Maze)
 
 ## com.shaharyi.strategy
 
