@@ -1,4 +1,5 @@
 # edu-java
+* For ASCII text graphics, try [ASCIIFlow](https://asciiflow.com)
 
 ## com.shaharyi.floodfill
 * Flood-fill area in several ways: recursion, stack, queue, scan-line algorithm
