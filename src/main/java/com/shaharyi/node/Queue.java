@@ -42,16 +42,12 @@ public class Queue<T>
 
   public String toString()
   {
-    if (isEmpty())
-      return "[]";
-    String s = "[";
-    insert(null);
-    T temp = remove();
-    while (temp != null) {
-      s += temp;
-      insert(temp);
-      temp = remove();
-      if (temp != null)
+    String s = "[";    
+    Node<T> p = first;
+    while (p != null) {
+      s += p.getValue();
+      p = p.getNext();
+      if (p != null)
         s += ", ";
     }
     return s + "]";
