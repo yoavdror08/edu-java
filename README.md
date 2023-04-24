@@ -9,7 +9,7 @@
 * Lets you play the game of Whist agains the computer.
 * Uses either array or stack for deck.
 * Uses linked list for cards in "hand".
-* [Run in replit.com](https://replit.com/@shaharyi/card-game)
+* [Run in replit.com](https://replit.com/@shaharyi/Whist)
 
 ## com.shaharyi.sheep
 * Finds how many sheep are captured starting a specified spot.
