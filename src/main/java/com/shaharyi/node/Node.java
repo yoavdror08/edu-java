@@ -15,15 +15,15 @@ public class Node<T> {
   }
 
   public T getValue() {
-    return this.value;
+    return value;
   }
 
   public Node<T> getNext() {
-    return this.next;
+    return next;
   }
 
   public boolean hasNext() {
-    return (this.next != null);
+    return (next != null);
   }
 
   public void setValue(T value) {
