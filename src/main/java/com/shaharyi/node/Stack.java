@@ -31,7 +31,9 @@ public class Stack<T>
   @Override
 public String toString() {
     if (!isEmpty()) {
+      // use Node.toString()
       String temp = head.toString();
+      // remove ending "null"
       return "top -> " + temp.substring(0, temp.length() - 4) + " bottom";
     }
     return null;
