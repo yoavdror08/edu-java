@@ -58,17 +58,19 @@ public class Main {
 	}
 
 	public static IntNode build(int[] a) {
-		IntNode p = new IntNode(a[0]);
-		IntNode h = p;
-		for (int i = 1; i < a.length; i++) {
-			p.setNext(new IntNode(a[i]));
-			p = p.getNext();
+		IntNode p = new IntNode(-1);
+		IntNode first = p;		
+		IntNode x;
+		for (int i = 0; i < a.length; i++) {
+			x = new IntNode(a[i]);
+			p.setNext(x);
+			p = x;
 		}
-		return h;
+		return first.getNext();
 	}
 	
 	public static void testIntNode() {
-		int[] b = { 1,1,5,1,2,4,8 };
+		int[] b = { 1, 1, 5, 1, 2, 4, 8 };
 		IntNode p = build(b);
 		System.out.println(p);
 	}
