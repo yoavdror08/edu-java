@@ -68,6 +68,17 @@ public class Main {
 		}
 		return first.getNext();
 	}
+
+	public static boolean contains(IntNode L1, IntNode L2) {
+		return false;
+	}
+	public static boolean isIn(IntNode p, int x) {
+		if (p == null)
+			return false;
+		if (p.getValue() == x)
+			return true;
+		return isIn(p.getNext(), x);
+	}
 	
 	public static void testIntNode() {
 		int[] b = { 1, 1, 5, 1, 2, 4, 8 };
