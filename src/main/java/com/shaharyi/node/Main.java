@@ -58,7 +58,7 @@ public class Main {
 	}
 
 	public static IntNode build(int[] a) {
-		IntNode p = new IntNode(-1);
+		IntNode p = new IntNode(-1);    // dummy node
 		IntNode first = p;		
 		IntNode x;
 		for (int i = 0; i < a.length; i++) {
@@ -66,12 +66,13 @@ public class Main {
 			p.setNext(x);
 			p = x;
 		}
-		return first.getNext();
+		return first.getNext();    // skip dummy node
 	}
 
-	public static boolean contains(IntNode L1, IntNode L2) {
+	public static boolean q8_contained(IntNode L1, IntNode L2) {
 		return false;
 	}
+	
 	public static boolean isIn(IntNode p, int x) {
 		if (p == null)
 			return false;
