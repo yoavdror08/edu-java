@@ -31,7 +31,7 @@ class Player{
   }
 
   public  void addCard(){
-    int number = (int)(Math.random()*2);
+    int number = (int)(Math.random()*3);
     if(number == 0){
       red++;
     }
