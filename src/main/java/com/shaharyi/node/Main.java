@@ -7,6 +7,21 @@ public class Main {
 		testStack();
 	}
 
+	public static <T> boolean isIn(Queue<T> q, T x) {
+		boolean r = false;
+		Queue<T> save = new Queue<T>();
+		while (!q.isEmpty()) {
+			T a = q.remove();
+			save.insert(x);
+			if (a.equals(x))
+				r = true;
+		}
+		while (!save.isEmpty()) {
+			q.insert(save.remove());
+		}
+		return r;
+	}
+	
 	public static void testQueue() {
 		Queue<Integer> q = new Queue<Integer>();
 		q.insert(7);
