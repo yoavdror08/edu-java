@@ -46,7 +46,14 @@ public class Main {
 		q.remove();
 		return r;
 	}
-	public static void pyramidABC(Queue<Character> q) {
+	
+	/*
+	 * c dd eee 0
+	 * true
+	 * 
+	 * Assume at least one letter before '0'
+	 */
+	public static void growingLetter(Queue<Character> q) {
 		int limit = 1, count = 1;
 		char a = q.remove();
 		int b = a;
