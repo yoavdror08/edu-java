@@ -57,19 +57,17 @@ public class Main {
 		int limit = 1, count = 1;
 		char a = q.remove();
 		int b = a;
-		while (a != '0') {
+		while (a == b) {
+			b++;
+			limit++;
 			count = 1;
+			a = q.remove();
 			while (count < limit && a == b) {
 				count++;
 				a = q.remove();
 			}
-			if (a != '0') {
-				b++;
-				limit++;
-				a = q.remove();
-			}
 		}
-		return (count == limit - 1);
+		return (count == 1 && a == '0');
 	}	
 	
 	public static void testStack() {
