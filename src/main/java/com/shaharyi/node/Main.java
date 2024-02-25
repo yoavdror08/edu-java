@@ -12,7 +12,7 @@ public class Main {
 		Queue<T> save = new Queue<T>();
 		while (!q.isEmpty()) {
 			T a = q.remove();
-			save.insert(x);
+			save.insert(a);
 			if (a.equals(x))
 				r = true;
 		}
