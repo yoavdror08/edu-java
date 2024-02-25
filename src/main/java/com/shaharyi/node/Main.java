@@ -46,6 +46,24 @@ public class Main {
 		q.remove();
 		return r;
 	}
+	public static void pyramidABC(Queue<Character> q) {
+		int limit = 1, count = 1;
+		char a = q.remove();
+		int b = a;
+		while (a != '0') {
+			count = 1;
+			while (count < limit && a == b) {
+				count++;
+				a = q.remove();
+			}
+			if (a != '0') {
+				b++;
+				limit++;
+				a = q.remove();
+			}
+		}
+		return (count == limit - 1);
+	}	
 	
 	public static void testStack() {
 		Stack<Integer> c = new Stack<>();
