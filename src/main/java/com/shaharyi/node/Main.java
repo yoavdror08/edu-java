@@ -7,6 +7,16 @@ public class Main {
 		testStack();
 	}
 
+	public static void testQueue() {
+		Queue<Integer> q = new Queue<Integer>();
+		q.insert(7);
+		q.insert(5);
+		q.insert(5);
+		q.insert(9);
+		q.insert(7);
+		q.insert(3);
+		System.out.println(q);
+	}
 	public static void testStack() {
 		Stack<Integer> c = new Stack<>();
 		c.push(3);
