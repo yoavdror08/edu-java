@@ -31,6 +31,7 @@ public class Main {
 		q.insert(7);
 		q.insert(3);
 		System.out.println(q);
+		System.out.println("isIn(q, 9): " + isIn(q, 9));
 	}
 	public static void testStack() {
 		Stack<Integer> c = new Stack<>();
