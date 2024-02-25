@@ -33,6 +33,20 @@ public class Main {
 		System.out.println(q);
 		System.out.println("isIn(q, 9): " + isIn(q, 9));
 	}
+	
+	public static <T> boolean hasXX(Queue<T> q, T x) {
+		boolean r = false;
+		q.insert(null);
+		while (q.head() != null) {
+			T a = q.remove();
+			q.insert(a);
+			if (a.equals(x) && x.equals(q.head()))
+				r = true;
+		}
+		q.remove();
+		return r;
+	}
+	
 	public static void testStack() {
 		Stack<Integer> c = new Stack<>();
 		c.push(3);
