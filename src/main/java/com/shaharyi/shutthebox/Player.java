@@ -11,6 +11,10 @@ public class Player {
 		this.strategy = strategy;
 	}
 
+	public int getStrategy() {
+		return strategy;
+	}
+	
 	public void reset() {
 		for (int i = 1; i < stones.length; i++) {
 			stones[i] = false;

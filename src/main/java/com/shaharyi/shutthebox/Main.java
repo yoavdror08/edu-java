@@ -51,7 +51,7 @@ public class Main {
 			wins[winIndex]++;
 		}
 		for (int i = 0; i < wins.length; i++) {
-			System.out.println(String.format("wins[%d]: %2d%%", i, wins[i] * 100 / numGames));
+			System.out.println(String.format("strategy = %d: wins[%d] = %2d%%", players[i].getStrategy(), i, wins[i] * 100 / numGames));
 		}
 	}
 }
