@@ -22,6 +22,14 @@ public class Player {
 		return false;
 	}
 
+	public boolean allAreShut() {
+		for (int i = 0; i < stones.length; i++) {
+			if (!stones[i])
+				return false;
+		}
+		return true;		
+	}
+	
 	public boolean isOut() {
 		return out;
 	}
