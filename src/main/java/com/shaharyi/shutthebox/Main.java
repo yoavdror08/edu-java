@@ -3,7 +3,7 @@
  * ============
  * A dice game for 2 players or more.
  * Each player has stones numbered 1 to 9.
- * You have to rid all your stones to win.
+ * You have to shut (i.e., discard) all your stones to win.
  * A player rolls the dice and must shut stones that add up to the sum of the dice.
  * If he has no move to play, he is out. His score is the sum of his remaining stones.
  * After every player has taken a turn, the player with the lowest score wins.
