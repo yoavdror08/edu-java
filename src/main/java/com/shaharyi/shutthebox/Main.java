@@ -12,13 +12,14 @@
 public class Main {
 
 	public static void main(String[] args) {
+		int numGames = 10000;
 		int numPlayers = 4;
 		Player[] players = new Player[numPlayers];
 		for (int i = 0; i < players.length; i++) {
 			players[i] = new Player(i + 1);
 		}
 		int[] wins = new int[numPlayers];
-		for (int i = 0; i < 10000; i++) {
+		for (int i = 0; i < numGames; i++) {
 			boolean done = false;
 			int out = 0;
 			for (int j = 0; j < players.length; j++) {
@@ -50,7 +51,7 @@ public class Main {
 			wins[winIndex]++;
 		}
 		for (int i = 0; i < wins.length; i++) {
-			System.out.println(String.format("wins[%d] = %d", i, wins[i]));
+			System.out.println(String.format("wins[%d]: %2d%%", i, wins[i] * 100 / numGames));
 		}
 	}
 }
