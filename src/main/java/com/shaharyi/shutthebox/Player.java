@@ -12,7 +12,7 @@ public class Player {
 	}
 
 	public void reset() {
-		for (int i = 0; i < stones.length; i++) {
+		for (int i = 1; i < stones.length; i++) {
 			stones[i] = false;
 		}
 		out = false;
@@ -21,18 +21,19 @@ public class Player {
 	public boolean playHigh(int sum) {
 		if (!playStone(sum))
 			if (!searchHigh2(sum))
-				return searchHigh3(sum);					
+				return searchHigh3(sum);
 		return true;
 	}
 
-	public boolean allAreShut() {
-		for (int i = 0; i < stones.length; i++) {
+	public int sumStones() {
+		int sum = 0;
+		for (int i = 1; i < stones.length; i++) {
 			if (!stones[i])
-				return false;
+				sum += i;
 		}
-		return true;		
+		return sum;
 	}
-	
+
 	public boolean isOut() {
 		return out;
 	}
@@ -68,9 +69,9 @@ public class Player {
 		}
 		return false;
 	}
-	
+
 	public boolean searchHigh2(int sum) {
-		int a = 5, b = 6;
+		int a = 8, b = 9;
 		while (a + b >= sum && b >= 2) {
 			if (a + b == sum && !stones[a] && !stones[b]) {
 				stones[a] = true;
@@ -85,10 +86,11 @@ public class Player {
 		}
 		return false;
 	}
+
 	public boolean searchHigh3(int sum) {
-		int a = 4, b = 5, c = 6;
-		while (a + b +c >= sum && c >= 3) {
-			if (a + b +c== sum && !stones[a] && !stones[b] && !stones[c]) {
+		int a = 7, b = 8, c = 9;
+		while (a + b + c >= sum && c >= 3) {
+			if (a + b + c == sum && !stones[a] && !stones[b] && !stones[c]) {
 				stones[a] = true;
 				stones[b] = true;
 				stones[c] = true;
@@ -138,8 +140,8 @@ public class Player {
 	}
 
 	/*
-	 * Try add random stone, until hitting target or busted.  
-	 * If busted, we start with zero sum again.
+	 * Try add random stone, until hitting target or busted. If busted, we start
+	 * with zero sum again.
 	 */
 	public boolean playRandom(int target) {
 		boolean found = false;

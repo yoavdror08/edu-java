@@ -21,10 +21,11 @@ public class Main {
 		for (int i = 0; i < 10000; i++) {
 			boolean done = false;
 			int out = 0;
-			int last = 0;
 			for (int j = 0; j < players.length; j++) {
 				players[j].reset();
 			}
+			int min = 9 * 10 / 2; // sum of 1+2+...+9
+			int winIndex = -1;
 			while (!done) {
 				boolean win = false;
 				for (int j = 0; j < players.length && !win; j++) {
@@ -32,18 +33,21 @@ public class Main {
 					int c2 = (int) (Math.random() * 6) + 1;
 					if (!players[j].isOut())
 						if (players[j].play(c1, c2)) {
-							last = j;
-							if (players[j].allAreShut())
+							if (players[j].sumStones() == 0) {
 								win = true;
-						}
-						else {
+								winIndex = j;
+							}
+						} else {
 							out++;
-							done = (out >= players.length - 1);
+							if (players[j].sumStones() < min) {
+								min = players[j].sumStones();
+								winIndex = j;
+							}
 						}
+					done = (out == players.length) || win;
 				}
 			}
-			if (!players[last].isOut())
-				wins[last]++;
+			wins[winIndex]++;
 		}
 		for (int i = 0; i < wins.length; i++) {
 			System.out.println(String.format("wins[%d] = %d", i, wins[i]));
