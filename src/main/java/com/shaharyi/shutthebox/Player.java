@@ -19,7 +19,10 @@ public class Player {
 	}
 
 	public boolean playHigh(int sum) {
-		return false;
+		if (!playStone(sum))
+			if (!searchHigh2(sum))
+				return searchHigh3(sum);					
+		return true;
 	}
 
 	public boolean allAreShut() {
@@ -61,6 +64,45 @@ public class Player {
 			if (b == 7) {
 				a++;
 				b = a + 1;
+			}
+		}
+		return false;
+	}
+	
+	public boolean searchHigh2(int sum) {
+		int a = 5, b = 6;
+		while (a + b >= sum && b >= 2) {
+			if (a + b == sum && !stones[a] && !stones[b]) {
+				stones[a] = true;
+				stones[b] = true;
+				return true;
+			}
+			a--;
+			if (a == 0) {
+				b--;
+				a = b - 1;
+			}
+		}
+		return false;
+	}
+	public boolean searchHigh3(int sum) {
+		int a = 4, b = 5, c = 6;
+		while (a + b +c >= sum && c >= 3) {
+			if (a + b +c== sum && !stones[a] && !stones[b] && !stones[c]) {
+				stones[a] = true;
+				stones[b] = true;
+				stones[c] = true;
+				return true;
+			}
+			a--;
+			if (a == 0) {
+				b--;
+				a = b - 1;
+			}
+			if (b == 1) {
+				c--;
+				b = c - 1;
+				a = b - 1;
 			}
 		}
 		return false;
@@ -130,8 +172,8 @@ public class Player {
 		int sum = c1 + c2;
 		boolean found = false;
 		if (strategy == 1)
-			found = playStone(sum);
-		if (strategy == 1 && !found || strategy == 2)
+			found = playHigh(sum);
+		if (strategy == 2)
 			found = playLow(sum);
 		if (strategy >= 3)
 			found = playRandom(sum);
