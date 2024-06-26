@@ -176,6 +176,14 @@ public class Player {
 		return found;
 	}
 
+	/**
+	 * play gets dice and makes a move if possible
+	 * @param c1 first die
+	 * @param c2 second die
+	 * @return did we find a move and played it
+	 * TODO:
+	 * Allow a strategy that uses only c1 if the player does not have 7, 8, 9.
+	 */
 	public boolean play(int c1, int c2) {
 		int sum = c1 + c2;
 		boolean found = false;
