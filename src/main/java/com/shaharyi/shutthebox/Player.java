@@ -14,7 +14,7 @@ public class Player {
 	public int getStrategy() {
 		return strategy;
 	}
-	
+
 	public void reset() {
 		for (int i = 1; i < stones.length; i++) {
 			stones[i] = false;
@@ -75,7 +75,8 @@ public class Player {
 	}
 
 	public boolean searchHigh2(int sum) {
-		int a = 8, b = 9;
+		int end = Math.min(sum, 9);
+		int a = end - 1, b = end;
 		while (a + b >= sum && b >= 2) {
 			if (a + b == sum && !stones[a] && !stones[b]) {
 				stones[a] = true;
@@ -92,7 +93,8 @@ public class Player {
 	}
 
 	public boolean searchHigh3(int sum) {
-		int a = 7, b = 8, c = 9;
+		int end = Math.min(sum, 9);
+		int a = end - 2, b = end - 1, c = end;
 		while (a + b + c >= sum && c >= 3) {
 			if (a + b + c == sum && !stones[a] && !stones[b] && !stones[c]) {
 				stones[a] = true;
