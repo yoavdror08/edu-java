@@ -53,7 +53,7 @@ public class Main {
 	 * 
 	 * Assume at least one letter before '0'
 	 */
-	public static void growingLetter(Queue<Character> q) {
+	public static boolean growingLetter(Queue<Character> q) {
 		int limit = 1, count = 1;
 		char a = q.remove();
 		int b = a;

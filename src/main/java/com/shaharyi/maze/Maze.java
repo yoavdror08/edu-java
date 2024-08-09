@@ -19,12 +19,12 @@ public class Maze {
 		start = new Point(1, 1);
 		end = new Point(w - 2, h - 2);
 		clear = ' ';
-		wall = '#';
+		wall = '@';
 		crumb = '.';
 		path = '+';
 		mat.fill(wall);
-		//genRecurse(start);
-		genStack(start);
+		genRecurse(start);
+		// genStack(start);
 		mat.set(start, 'X');
 		mat.set(end, 'X');
 	}
@@ -42,13 +42,13 @@ public class Maze {
 		}
 	}
 
-  void shuffleRecurse(Object[] arr, int n) {
-    if (n==0)
-    	return;
-    int r = rand.nextInt(n+1);
-    swap(arr, n, r);
-    shuffleRecurse(arr, n-1);
-  }
+	void shuffleRecurse(Object[] arr, int n) {
+		if (n == 0)
+			return;
+		int r = rand.nextInt(n + 1);
+		swap(arr, n, r);
+		shuffleRecurse(arr, n - 1);
+	}
 
 	public Point[] neighbors(Point p, int step, boolean shuffle) {
 		int x = p.x, y = p.y;
@@ -61,7 +61,7 @@ public class Maze {
 		}; 
 		// @formatter:on
 		if (shuffle)
-			shuffleRecurse(ret, ret.length-1);
+			shuffleRecurse(ret, ret.length - 1);
 		return ret;
 	}
 
@@ -70,6 +70,8 @@ public class Maze {
 	}
 
 	public void genRecurse(Point pos) {
+		mat.print();
+
 		mat.set(pos, clear);
 		Point[] neibors = neighbors(pos, 2, true);
 		Point mid;
@@ -138,4 +140,3 @@ public class Maze {
 	}
 
 }
-

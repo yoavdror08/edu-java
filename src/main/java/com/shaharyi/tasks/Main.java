@@ -1,3 +1,7 @@
+package com.shaharyi.tasks;
+
+import com.shaharyi.node.Queue;
+
 public class Main {
 
 	public static void main(String[] args) {

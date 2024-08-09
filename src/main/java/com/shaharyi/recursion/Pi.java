@@ -1,3 +1,5 @@
+package com.shaharyi.recursion;
+
 class Pi {
     public static void main(String[] args) {
         System.out.println(sum(3));

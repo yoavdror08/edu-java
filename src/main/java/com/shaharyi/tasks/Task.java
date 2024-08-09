@@ -1,3 +1,4 @@
+package com.shaharyi.tasks;
 
 public class Task {
 	private String id;

@@ -1,3 +1,5 @@
+package com.shaharyi.shutthebox;
+
 /*
  * Shut The Box
  * ============

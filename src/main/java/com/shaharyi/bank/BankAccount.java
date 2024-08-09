@@ -1,3 +1,5 @@
+package com.shaharyi.bank;
+
 class BankAccount
 {
   private int minBalance;

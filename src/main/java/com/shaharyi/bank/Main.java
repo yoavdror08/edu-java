@@ -1,3 +1,5 @@
+package com.shaharyi.bank;
+
 import java.util.Random;
 
 class Main {

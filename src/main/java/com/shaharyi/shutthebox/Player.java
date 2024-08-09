@@ -1,3 +1,5 @@
+package com.shaharyi.shutthebox;
+
 public class Player {
 	private boolean[] stones;
 	private boolean out;

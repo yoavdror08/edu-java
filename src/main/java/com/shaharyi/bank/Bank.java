@@ -1,3 +1,5 @@
+package com.shaharyi.bank;
+
 class Bank 
 {
   private String name;
@@ -83,7 +85,7 @@ class Bank
   public boolean deleteAccount(String owner) {
     for (int i = 0; i < accounts.length; i++)
     {      
-      if (account[i] != null) {
+      if (accounts[i] != null) {
         if (accounts[i].getOwner().equals(owner)) {
           accounts[i] = null;      
           numAccounts--;
