@@ -44,7 +44,7 @@ public class Maze {
 
   void shuffleRecurse(Object[] arr, int n) {
     if (n==0)
-      return;
+    	return;
     int r = rand.nextInt(n+1);
     swap(arr, n, r);
     shuffleRecurse(arr, n-1);
@@ -75,7 +75,7 @@ public class Maze {
 		Point mid;
 		for (int i = 0; i < neibors.length; i++) {
 			if (mat.get(neibors[i]) == wall) {
-        mid = middle(pos, neibors[i]);
+				mid = middle(pos, neibors[i]);
 				mat.set(mid, clear);
 				genRecurse(neibors[i]);
 			}
@@ -102,14 +102,14 @@ public class Maze {
 		mat.set(pos, clear);
 		stack.push(pos);
 		Point[] neibors;
-    Point mid;
+		Point mid;
 		while (!stack.isEmpty()) {
 			pos = stack.pop();
 			neibors = neighbors(pos, 2, true);
 			for (int i = 0; i < neibors.length; i++) {
 				if (mat.get(neibors[i]) == wall) {
 					mat.set(neibors[i], clear);
-          mid = middle(pos, neibors[i]);
+					mid = middle(pos, neibors[i]);
 					mat.set(mid, clear);
 					stack.push(neibors[i]);
 				}
