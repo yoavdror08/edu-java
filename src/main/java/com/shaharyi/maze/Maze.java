@@ -92,7 +92,7 @@ public class Maze {
 			neibors[r] = neibors[i - 1];
 			if (mat.get(next) == wall) {
 				mat.set(middle(pos, next), clear);
-				genRecurse(next);
+				genRecurseRand(next);
 			}
 		}
 	}
