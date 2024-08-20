@@ -42,6 +42,17 @@ public class Mat {
 		}
 	}
 
+	public void frame(char c) {
+		for (int j = 0; j < this.width; j++) {
+			mat[0][j] = c;
+			mat[this.height - 1][j] = c;
+		}
+		for (int i = 0; i < this.height; i++) {
+			mat[i][0] = c;
+			mat[i][this.width - 1] = c;
+		}
+	}
+
 	public void set(int x, int y, char c) {
 		if (x >= 0 && x < width && y >= 0 && y < height)
 			mat[y][x] = c;
@@ -63,11 +74,13 @@ public class Mat {
 
 	public void print() {
 		System.out.println();
-		for (int i = 0; i < mat.length; i++) {
-			for (int j = 0; j < mat[0].length; j++) {
+		for (int i = 0; i < height; i++) {
+//			String b = new String(mat[i]);
+			for (int j = 0; j < width; j++) {
 				System.out.print(mat[i][j] + " ");
 			}
 			System.out.println();
+//			System.out.println(b);
 		}
 	}
 
@@ -146,4 +159,3 @@ public class Mat {
 		}
 	}
 }
-
