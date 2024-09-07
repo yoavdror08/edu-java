@@ -3,7 +3,7 @@
 
 **Input is always:** matrix, an infected location (row, column)
 ## Task 1
-Output: All infected locations ("(connected component)[https://en.wikipedia.org/wiki/Component_(graph_theory)]" of the (graph)[https://en.wikipedia.org/wiki/Graph_(discrete_mathematics)])
+Output: All infected locations ("[connected component](https://en.wikipedia.org/wiki/Component_(graph_theory))" of the [graph](https://en.wikipedia.org/wiki/Graph_(discrete_mathematics)))
 ## Task 2
 Output: All infected that originated from the input, ordered by time of infection
 ## Task 3
