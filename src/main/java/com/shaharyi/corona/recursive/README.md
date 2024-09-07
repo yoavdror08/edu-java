@@ -7,4 +7,4 @@ Output: All infected locations
 ## Task 2
 Output: All infected that originated from the input, ordered by time of infection
 ## Task 3
-Output: Location of patient zero (containing 1)
+Output: Location of patient zero (it contains 1)
