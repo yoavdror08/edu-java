@@ -24,8 +24,11 @@ public class Main {
 		return p.getValue();
 	}
 
-	/*
-	 * return number of tries
+	/**
+	 * On every iteration, swapBest finds the guess with best score according to current value of e,a,b.
+	 * It swaps it with current node so we can go on forward, leaving the old guesses behind.
+	 * 
+	 * @return number of tries
 	 */
 	static int solve(char[] target, Node<char[]> bank, int len) {
 		char[] e = "#####".toCharArray(); // exact
@@ -70,6 +73,15 @@ public class Main {
 		System.out.println();
 	}
 
+	/**
+	 * Update auxiliary variables according to expected feedback on current guess with respect to the target. 
+	 * Normally, the app would color the letters according to "correct position", "appears elsewhere in word", "not in word".
+	 * @param g
+	 * @param t
+	 * @param e
+	 * @param a
+	 * @param b
+	 */
 	static void update(char[] g, char[] t, char[] e, char[] a, char[] b) {
 		int j = find('#', a);
 		for (int i = 0; i < g.length; i++)
@@ -140,6 +152,7 @@ public class Main {
 		int ce = common(g, e);
 		int ca = common(g, a);
 		int cb = common(g, b);
+		// guess with many distinct letters is better, as the feedback will give more info 
 		int cu = 5 - countDistinct(g);
 		if (count(e) + count(a) < 5)
 			return 15 - (ce + ca + cb + cu);
