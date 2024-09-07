@@ -3,7 +3,7 @@
 
 **Input is always:** matrix, an infected location (row, column)
 ## Task 1
-Outut: All infected locations
+Output: All infected locations
 ## Task 2
 Output: All infected ordered by time of infection
 ## Task 3
