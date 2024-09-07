@@ -4,13 +4,13 @@ package com.shaharyi.recursion;
 
 class Pi {
 	public static void main(String[] args) {
-		System.out.println(sum(3));
+		System.out.println(sum(5));
 		System.out.println("start");
 		double r = 4 * calcPI(0, 0, 0.0001);
 		System.out.println(r);
 		r = 4 * PI(0, 0.0001);
 		System.out.println(r);
-		r = 3 + contFracPI(1, 9900);
+		r = 3 + contFracPI(1, 5000);
 		System.out.println(r);
 		r = 4 / (1 + euler(1, 120));
 		System.out.println(r);
