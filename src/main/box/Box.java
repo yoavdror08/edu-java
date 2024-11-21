@@ -2,11 +2,11 @@ public class Box<T> {
 
     private T item;
 
-    public Box(T param) {
-      item = param;
+    public Box(T item) {
+      item = x;
     }
 
-    public void setItem(T t) {
+    public void setItem(T item) {
       this.item = item; 
     }
     
