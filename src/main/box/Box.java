@@ -1,22 +1,22 @@
 public class Box<T> {
 
-    private T t;
+    private T item;
 
     public Box(T param) {
-      t = param;
+      item = param;
     }
 
-    public void set(T t) {
-      this.t = t; 
+    public void setItem(T t) {
+      this.item = item; 
     }
     
-    public T get() {
-      return t; 
+    public T getItem() {
+      return item; 
     }
     
     public String toString() {
-      String s = "t: ";
-      s = s + t.toString();
+      String s = "item: ";
+      s = s + item.toString();
       return s;
     }
 }
