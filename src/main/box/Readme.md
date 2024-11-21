@@ -3,6 +3,7 @@
 2. Add and change code in Box.java as needed to support t2.
 3. Add property *item2* of type T and add support for it.
 4. Write example code in Main.java to use both *num* and *item2* nicely.
+5. Define array of Box<Double> of size 10, and put random numbers in them in both num and item2.
 
 ## Pair
 1. Create a new file Pair.java
