@@ -6,7 +6,8 @@
 
 ## Pair
 1. Create a new file Pair.java
-2. Write in it a class Pair with two generic type parameters: K and V
+2. Write in it a class Pair with two generic type parameters K and V, and a property for each of them
+class Pair<K,V> {
 3. Add method "toString()"
 4. Add to main() code to create pairs like p1,p2 and print them.
 
