@@ -7,14 +7,12 @@
 
 ## Pair
 1. Create a new file Pair.java
-2. Write in it a class Pair with two generic type parameters K and V, and a property for each of them
-   
-class Pair<K,V> {
-4. Add method "toString()"
-5. Add to main() code to create pairs like p1,p2 and print them.
+2. Write in it a class Pair with two generic type parameters K and V, and a property for each of them <pre>class Pair<K,V> {</pre>
+3. Add method "toString()"
+4. Add to main() code to create pairs like p1,p2 and print them.
 
 Hint for main():
-
+<pre>
 Pair<Integer, String> p1 = new Pair<>(5, "dog");
-
+</pre>
 ### Goodluck!
