@@ -2,7 +2,7 @@ public class Box<T> {
 
     private T item;
 
-    public Box(T item) {
+    public Box(T x) {
       item = x;
     }
 
