@@ -1,5 +1,5 @@
 ## Box
-1. Add in Box.java another property *num* of type int.
+1. Add in Box.java another property **num** of type int.
 2. Add and change code in Box.java as needed to support t2.
 3. Add property *item2* of type T and add support for it.
 4. Write example code in Main.java to use both *num* and *item2* nicely.
