@@ -34,19 +34,6 @@ public class Main {
 		return h.getNext();
 	}
 	
-	public static Node<Integer> delOne(Node<Integer> h, int target) {
-		h = new Node<Integer>(-1, h);
-		Node<Integer> p = h;
-		while (p.hasNext()) {
-			if (p.getNext().getValue() == target) {
-				p.setNext(p.getNext().getNext());
-				done = True;
-			}
-			p = p.getNext();
-		}
-		return h.getNext();
-	}
-	
 	public static <T> boolean isIn(Queue<T> q, T x) {
 		boolean r = false;
 		Queue<T> save = new Queue<T>();
