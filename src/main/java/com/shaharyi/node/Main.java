@@ -6,7 +6,19 @@ public class Main {
 		testIntNode();
 		testStack();
 	}
-
+	
+	public static Node<Integer> buildList(int[] a) {
+		Node<Integer> h = new Node<Integer>(-1);
+		Node<Integer> p = h;
+		Node<Integer> x;
+		for (int i = 0; i < a.length; i++) {
+			x = new Node<Integer>(a[i]);
+			p.setNext(x);
+			p = p.getNext();
+		}
+		return h.getNext();
+	}
+	
 	public static <T> boolean isIn(Queue<T> q, T x) {
 		boolean r = false;
 		Queue<T> save = new Queue<T>();
