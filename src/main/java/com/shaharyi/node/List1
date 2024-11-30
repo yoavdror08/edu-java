@@ -1,0 +1,99 @@
+package list1;
+
+public class List {
+//1
+    public static List<Integer> arrayToList(int[] arr) {
+        List<Integer> list = new ArrayList<>();
+        for (int i = 0; i < arr.length; i++) {
+            list.add(arr[i]);
+        }
+        return list;
+    }
+//2
+    public static void printListSeparated(List<Integer> list) {
+        for (int i : list) {
+            System.out.println(i);
+        }
+    }
+//3
+    public static void printListRecursive(List<Integer> list, int index) {
+        if (index >= list.size()) {
+            return;
+        }
+        System.out.println(list.get(index));
+        printListRecursive(list, index + 1);
+    }
+//4
+    public static void printListReverseRecursive(List<Integer> list, int index) {
+        if (index < 0) {
+            return;
+        }
+        System.out.println(list.get(index));
+        printListReverseRecursive(list, index - 1);
+    }
+    
+ //5
+    public static List<Integer> collectPositiveNumbers() {
+        List<Integer> list = new ArrayList<>();
+        java.util.Scanner scanner = new java.util.Scanner(System.in);
+        while (true) {
+            System.out.print("Enter a positive number (or -1 to stop): ");
+            int num = scanner.nextInt();
+            if (num < 0) {
+                break;
+            }
+            list.add(num);
+        }
+        return list;
+    }
+
+  // 6
+    public static void printEvenNumbers(List<Integer> list) {
+        for (int num : list) {
+            if (num % 2 == 0) {
+                System.out.println(num);
+            }
+        }
+    }
+
+ // 7
+    public static boolean isNumberInList(List<Integer> list, int num) {
+        return list.contains(num);
+    }
+
+ // 8
+    public static List<Integer> removeFirstOccurrence(List<Integer> list, int num) {
+        if (list.isEmpty()) {
+            return list;
+        }
+        if (list.get(0) == num) {
+            list.remove(0);
+            return list;
+        }
+        list.set(0, list.get(0)); 
+        List<Integer> updatedList = removeFirstOccurrence(list.subList(1, list.size()), num);
+        return updatedList;
+    }
+
+ // 9
+    public static List<Integer> removeAtIndex(List<Integer> list, int index) {
+        if (index < 0 || index >= list.size()) {
+            return list;
+        }
+        list.remove(index);
+        return list;
+    }
+
+}
+
+
+
+
+
+package list1;
+
+public class main {
+    public static void main(String[] args) {
+        int[] arr = {1, 2, 3, 4, 5};
+        }
+}
